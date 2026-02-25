@@ -1,0 +1,229 @@
+/* 邻里分身 - 设计系统 */
+
+:root {
+    /* 主色调 - 温暖的橙色系 */
+    --primary: #F97316;
+    --primary-dark: #EA580C;
+    --primary-light: #FFEDD5;
+    
+    /* 背景色 - 米白色系 */
+    --bg-base: #FFFBF5;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #FFF7ED;
+    
+    /* 文字色 - 深棕色系 */
+    --text-primary: #3D2914;
+    --text-secondary: #78716C;
+    --text-muted: #A8A29E;
+    
+    /* 边框和分割线 */
+    --border-light: #F5F0EB;
+    --border-default: #E7E0DA;
+    
+    /* 状态色 */
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    
+    /* 阴影 */
+    --shadow-sm: 0 1px 2px rgba(61, 41, 20, 0.05);
+    --shadow-md: 0 4px 12px rgba(61, 41, 20, 0.08);
+    --shadow-lg: 0 8px 24px rgba(61, 41, 20, 0.12);
+    
+    /* 圆角 */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    
+    /* 字体 */
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* 基础重置 */
+* {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 按钮样式 */
+.btn-primary {
+    width: 100%;
+    height: 56px;
+    background: var(--primary);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-primary:active {
+    background: var(--primary-dark);
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    width: 100%;
+    height: 56px;
+    background: transparent;
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-lg);
+    color: var(--primary);
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:active {
+    background: var(--primary-light);
+}
+
+/* 卡片样式 */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    padding: 16px;
+}
+
+/* 标签样式 */
+.tag {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    display: inline-block;
+}
+
+/* 头像样式 */
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary);
+}
+
+/* 底部导航样式 */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 375px;
+    height: 80px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 20px;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+}
+
+.nav-item i {
+    font-size: 22px;
+    color: var(--text-muted);
+}
+
+.nav-item span {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.nav-item.active i,
+.nav-item.active span {
+    color: var(--primary);
+}
+
+/* 发布按钮 */
+.publish-btn {
+    width: 56px;
+    height: 56px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    margin-top: -20px;
+}
+
+.publish-btn i {
+    font-size: 24px;
+    color: white;
+}
+
+/* 认证徽章 */
+.badge-verified {
+    background: var(--success);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* 价格样式 */
+.price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--error);
+}
+
+.price span {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* 输入框样式 */
+.input-field {
+    width: 100%;
+    height: 52px;
+    border: 2px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 0 16px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: var(--bg-card);
+}
+
+.input-field:focus {
+    border-color: var(--primary);
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>记忆库 - 邻里分身</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { background: #FFFBF5; }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #FFFBF5; padding-bottom: 140px; }
+        
+        .header { background: #FFFFFF; padding: 16px; border-bottom: 1px solid #F5F0EB; position: sticky; top: 0; z-index: 100; }
+        .header-title { font-size: 20px; font-weight: 700; color: #3D2914; }
+        
+        .category-tabs { display: flex; gap: 8px; padding: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .category-tab { flex-shrink: 0; padding: 8px 16px; background: #FFFFFF; border: 1px solid #E7E0DA; border-radius: 20px; font-size: 14px; color: #78716C; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .category-tab.active { background: #F97316; border-color: #F97316; color: white; }
+        .category-tab .count { background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 10px; font-size: 11px; }
+        .category-tab.active .count { background: rgba(255,255,255,0.3); }
+        
+        .memory-list { padding: 0 16px; }
+        .memory-card { background: #FFFFFF; border: 1px solid #F5F0EB; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+        .memory-header { display: flex; align-items: flex-start; gap: 12px; }
+        .memory-icon { width: 40px; height: 40px; background: #FFEDD5; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
+        .memory-content { flex: 1; }
+        .memory-title { font-size: 15px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
+        .memory-detail { font-size: 13px; color: #78716C; line-height: 1.5; }
+        .memory-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F5F0EB; }
+        .memory-time { font-size: 12px; color: #A8A29E; }
+        .memory-actions { display: flex; gap: 8px; }
+        .memory-action { padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; border: none; transition: all 0.2s; }
+        .memory-action.edit { background: #F5F0EB; color: #78716C; }
+        .memory-action.delete { background: #FEE2E2; color: #EF4444; }
+        .memory-action:active { opacity: 0.7; }
+        
+        .input-area { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: #FFFFFF; border-top: 1px solid #F5F0EB; padding: 12px 16px; z-index: 100; }
+        .input-box { display: flex; align-items: center; gap: 12px; background: #F5F0EB; border-radius: 24px; padding: 12px 16px; }
+        .input-box input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: #3D2914; }
+        .input-box input::placeholder { color: #A8A29E; }
+        .send-btn { width: 40px; height: 40px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; }
+        .send-btn i { font-size: 16px; color: white; }
+        .send-btn:disabled { background: #E7E0DA; }
+        .send-btn:disabled i { color: #A8A29E; }
+        
+        /* 记忆弹窗 */
+        .memory-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 343px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 8px 32px rgba(61, 41, 20, 0.15); padding: 16px; z-index: 200; opacity: 0; transform: translateX(-50%) translateY(-20px); transition: all 0.3s ease; pointer-events: none; }
+        .memory-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .toast-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .toast-icon { width: 44px; height: 44px; background: #FFEDD5; border-radius: 12px; display: flex; justify-content: center; align-items: center; }
+        .toast-icon i { font-size: 20px; color: #F97316; }
+        .toast-title { flex: 1; }
+        .toast-title h3 { font-size: 15px; font-weight: 600; color: #3D2914; margin-bottom: 2px; }
+        .toast-title p { font-size: 13px; color: #78716C; }
+        .toast-countdown { width: 36px; height: 36px; border-radius: 50%; background: #F97316; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: white; }
+        .toast-content { background: #FFFBF5; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+        .toast-memory { display: flex; align-items: flex-start; gap: 10px; }
+        .toast-memory-icon { font-size: 20px; }
+        .toast-memory-text { font-size: 14px; color: #3D2914; line-height: 1.5; }
+        .toast-actions { display: flex; gap: 8px; }
+        .toast-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .toast-btn.reject { background: #F5F0EB; color: #78716C; }
+        .toast-btn.accept { background: #F97316; color: white; }
+        .toast-btn:active { opacity: 0.8; }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F5F0EB; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
+        .nav-item i { font-size: 22px; color: #A8A29E; }
+        .nav-item span { font-size: 11px; color: #A8A29E; }
+        .nav-item.active i, .nav-item.active span { color: #F97316; }
+        .publish-btn { width: 56px; height: 56px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); margin-top: -20px; }
+        .publish-btn i { font-size: 24px; color: white; }
+        
+        .empty-state { text-align: center; padding: 40px 24px; }
+        .empty-icon { width: 64px; height: 64px; background: #FFEDD5; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; }
+        .empty-icon i { font-size: 28px; color: #F97316; }
+        .empty-title { font-size: 16px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
+        .empty-desc { font-size: 14px; color: #78716C; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="header">
+            <div class="header-title">记忆库</div>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs"></div>
+
+        <div class="memory-list" id="memoryList"></div>
+
+        <div class="input-area">
+            <div class="input-box">
+                <input type="text" id="memoryInput" placeholder="告诉分身更多关于你的事...">
+                <button class="send-btn" onclick="addMemory()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 记忆弹窗 -->
+        <div class="memory-toast" id="memoryToast">
+            <div class="toast-header">
+                <div class="toast-icon"><i class="fas fa-brain"></i></div>
+                <div class="toast-title">
+                    <h3>分身学会了新记忆</h3>
+                    <p>是否保存到记忆库？</p>
+                </div>
+                <div class="toast-countdown" id="countdown">5</div>
+            </div>
+            <div class="toast-content">
+                <div class="toast-memory">
+                    <span class="toast-memory-icon">🏃</span>
+                    <span class="toast-memory-text">喜欢周末运动，经常打羽毛球和跑步</span>
+                </div>
+            </div>
+            <div class="toast-actions">
+                <button class="toast-btn reject" onclick="rejectMemory()">忽略</button>
+                <button class="toast-btn accept" onclick="acceptMemory()">保存</button>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="location.href='hall.html'">
+                <i class="fas fa-home"></i>
+                <span>大厅</span>
+            </div>
+            <div class="nav-item active">
+                <i class="fas fa-brain"></i>
+                <span>记忆</span>
+            </div>
+            <div class="nav-item" onclick="location.href='publish.html'">
+                <div class="publish-btn"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="nav-item" onclick="location.href='chat-list.html'">
+                <i class="fas fa-comment-dots"></i>
+                <span>聊天</span>
+            </div>
+            <div class="nav-item" onclick="location.href='profile.html'">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="data/mock-data.js"></script>
+    <script>
+        let currentCategory = 'all';
+        let countdownTimer = null;
+
+        // 初始化
+        renderCategoryTabs();
+        renderMemoryList();
+
+        function renderCategoryTabs() {
+            const categories = [
+                { key: 'all', label: '全部' },
+                { key: 'basic', label: '基本信息' },
+                { key: 'skill', label: '技能特长' },
+                { key: 'hobby', label: '兴趣爱好' },
+                { key: 'habit', label: '生活习惯' }
+            ];
+
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = categories.map(cat => {
+                const count = cat.key === 'all' 
+                    ? Object.values(MOCK_DATA.memory).flat().length 
+                    : (MOCK_DATA.memory[cat.key] || []).length;
+                return `
+                    <div class="category-tab ${cat.key === currentCategory ? 'active' : ''}" 
+                         onclick="selectCategory('${cat.key}')">
+                        ${cat.label}
+                        <span class="count">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMemoryList() {
+            const container = document.getElementById('memoryList');
+            let memories = [];
+            
+            if (currentCategory === 'all') {
+                memories = Object.entries(MOCK_DATA.memory).flatMap(([category, items]) => 
+                    items.map(item => ({ ...item, category }))
+                );
+            } else {
+                memories = (MOCK_DATA.memory[currentCategory] || []).map(item => ({ ...item, category: currentCategory }));
+            }
+
+            if (memories.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-lightbulb"></i></div>
+                        <div class="empty-title">暂无记忆</div>
+                        <div class="empty-desc">告诉分身更多关于你的事</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = memories.map(item => `
+                <div class="memory-card">
+                    <div class="memory-header">
+                        <div class="memory-icon">${item.icon}</div>
+                        <div class="memory-content">
+                            <div class="memory-title">${item.content}</div>
+                            ${item.detail ? `<div class="memory-detail">${item.detail}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="memory-meta">
+                        <div class="memory-time">${item.time}</div>
+                        <div class="memory-actions">
+                            <button class="memory-action edit" onclick="editMemory('${item.id}')">编辑</button>
+                            <button class="memory-action delete" onclick="deleteMemory('${item.id}')">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(category) {
+            currentCategory = category;
+            renderCategoryTabs();
+            renderMemoryList();
+        }
+
+        function showMemoryToast() {
+            const toast = document.getElementById('memoryToast');
+            const countdown = document.getElementById('countdown');
+            toast.classList.add('show');
+            
+            let seconds = 5;
+            countdown.textContent = seconds;
+            
+            countdownTimer = setInterval(() => {
+                seconds--;
+                countdown.textContent = seconds;
+                if (seconds <= 0) {
+                    acceptMemory();
+                }
+            }, 1000);
+        }
+
+        function hideMemoryToast() {
+            const toast = document.getElementById('memoryToast');
+            toast.classList.remove('show');
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+        }
+
+        function acceptMemory() {
+            hideMemoryToast();
+            alert('✅ 记忆已保存到记忆库！');
+        }
+
+        function rejectMemory() {
+            hideMemoryToast();
+            alert('已忽略该记忆');
+        }
+
+        function addMemory() {
+            const input = document.getElementById('memoryInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            // 触发记忆弹窗演示
+            document.querySelector('.toast-memory-text').textContent = text;
+            showMemoryToast();
+            input.value = '';
+        }
+
+        function editMemory(id) {
+            alert('编辑记忆：' + id);
+        }
+
+        function deleteMemory(id) {
+            if (confirm('确定要删除这条记忆吗？')) {
+                alert('已删除记忆：' + id);
+            }
+        }
+    </script>
+</body>
+</html>
