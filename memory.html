@@ -4,81 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>记忆库 - 邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
     <style>
-        body { background: #FFFBF5; }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #FFFBF5; padding-bottom: 140px; }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { background: #F5F5F5; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #F5F5F5; padding-bottom: 140px; }
         
-        .header { background: #FFFFFF; padding: 16px; border-bottom: 1px solid #F5F0EB; position: sticky; top: 0; z-index: 100; }
-        .header-title { font-size: 20px; font-weight: 700; color: #3D2914; }
+        .header { background: #FFFFFF; padding: 16px; position: sticky; top: 0; z-index: 100; }
+        .header-title { font-size: 20px; font-weight: 700; color: #1a1a1a; }
         
-        .category-tabs { display: flex; gap: 8px; padding: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .category-tabs { display: flex; gap: 8px; padding: 12px 16px; overflow-x: auto; background: #FFFFFF; }
         .category-tabs::-webkit-scrollbar { display: none; }
-        .category-tab { flex-shrink: 0; padding: 8px 16px; background: #FFFFFF; border: 1px solid #E7E0DA; border-radius: 20px; font-size: 14px; color: #78716C; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-        .category-tab.active { background: #F97316; border-color: #F97316; color: white; }
-        .category-tab .count { background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 10px; font-size: 11px; }
+        .category-tab { flex-shrink: 0; padding: 8px 14px; background: #F5F5F5; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+        .category-tab.active { background: #FF6B35; color: white; }
+        .category-tab .count { background: rgba(0,0,0,0.1); padding: 1px 6px; border-radius: 8px; font-size: 11px; }
         .category-tab.active .count { background: rgba(255,255,255,0.3); }
         
-        .memory-list { padding: 0 16px; }
-        .memory-card { background: #FFFFFF; border: 1px solid #F5F0EB; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-        .memory-header { display: flex; align-items: flex-start; gap: 12px; }
-        .memory-icon { width: 40px; height: 40px; background: #FFEDD5; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
-        .memory-content { flex: 1; }
-        .memory-title { font-size: 15px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
-        .memory-detail { font-size: 13px; color: #78716C; line-height: 1.5; }
-        .memory-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F5F0EB; }
-        .memory-time { font-size: 12px; color: #A8A29E; }
-        .memory-actions { display: flex; gap: 8px; }
-        .memory-action { padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; border: none; transition: all 0.2s; }
-        .memory-action.edit { background: #F5F0EB; color: #78716C; }
-        .memory-action.delete { background: #FEE2E2; color: #EF4444; }
-        .memory-action:active { opacity: 0.7; }
+        .memory-list { padding: 8px 16px; }
         
-        .input-area { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: #FFFFFF; border-top: 1px solid #F5F0EB; padding: 12px 16px; z-index: 100; }
-        .input-box { display: flex; align-items: center; gap: 12px; background: #F5F0EB; border-radius: 24px; padding: 12px 16px; }
-        .input-box input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: #3D2914; }
-        .input-box input::placeholder { color: #A8A29E; }
-        .send-btn { width: 40px; height: 40px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; }
-        .send-btn i { font-size: 16px; color: white; }
-        .send-btn:disabled { background: #E7E0DA; }
-        .send-btn:disabled i { color: #A8A29E; }
+        /* 记忆卡片 - 左滑删除 */
+        .memory-card-wrapper { position: relative; margin-bottom: 8px; overflow: hidden; border-radius: 12px; }
+        .memory-card { background: #FFFFFF; padding: 14px 16px; position: relative; z-index: 1; transition: transform 0.2s ease; touch-action: pan-y; }
+        .memory-card.swiped { transform: translateX(-120px); }
+        
+        .memory-text { font-size: 15px; color: #1a1a1a; line-height: 1.5; }
+        .memory-text .detail { color: #666; font-size: 14px; margin-top: 4px; }
+        
+        /* 操作按钮层 */
+        .card-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; z-index: 0; }
+        .card-action { width: 60px; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
+        .card-action.edit { background: #F5F5F5; color: #666; }
+        .card-action.delete { background: #FF4757; color: white; }
+        .card-action i { font-size: 18px; margin-bottom: 4px; }
+        .card-action span { font-size: 11px; }
+        
+        .input-area { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: #FFFFFF; border-top: 1px solid #F0F0F0; padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 100; }
+        .input-box { display: flex; align-items: center; gap: 10px; background: #F5F5F5; border-radius: 20px; padding: 10px 14px; }
+        .input-box input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: #1a1a1a; }
+        .input-box input::placeholder { color: #999; }
+        .send-btn { width: 36px; height: 36px; background: #FF6B35; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; }
+        .send-btn i { font-size: 14px; color: white; }
         
         /* 记忆弹窗 */
-        .memory-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 343px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 8px 32px rgba(61, 41, 20, 0.15); padding: 16px; z-index: 200; opacity: 0; transform: translateX(-50%) translateY(-20px); transition: all 0.3s ease; pointer-events: none; }
+        .memory-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 343px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); padding: 16px; z-index: 200; opacity: 0; transform: translateX(-50%) translateY(-20px); transition: all 0.3s ease; pointer-events: none; }
         .memory-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
         .toast-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .toast-icon { width: 44px; height: 44px; background: #FFEDD5; border-radius: 12px; display: flex; justify-content: center; align-items: center; }
-        .toast-icon i { font-size: 20px; color: #F97316; }
+        .toast-icon { width: 40px; height: 40px; background: #FFF5EB; border-radius: 10px; display: flex; justify-content: center; align-items: center; }
+        .toast-icon i { font-size: 18px; color: #FF6B35; }
         .toast-title { flex: 1; }
-        .toast-title h3 { font-size: 15px; font-weight: 600; color: #3D2914; margin-bottom: 2px; }
-        .toast-title p { font-size: 13px; color: #78716C; }
-        .toast-countdown { width: 36px; height: 36px; border-radius: 50%; background: #F97316; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: white; }
-        .toast-content { background: #FFFBF5; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-        .toast-memory { display: flex; align-items: flex-start; gap: 10px; }
-        .toast-memory-icon { font-size: 20px; }
-        .toast-memory-text { font-size: 14px; color: #3D2914; line-height: 1.5; }
+        .toast-title h3 { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+        .toast-title p { font-size: 13px; color: #999; }
+        .toast-countdown { width: 32px; height: 32px; border-radius: 50%; background: #FF6B35; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: white; }
+        .toast-content { background: #F5F5F5; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+        .toast-memory-text { font-size: 14px; color: #1a1a1a; line-height: 1.5; }
         .toast-actions { display: flex; gap: 8px; }
-        .toast-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
-        .toast-btn.reject { background: #F5F0EB; color: #78716C; }
-        .toast-btn.accept { background: #F97316; color: white; }
-        .toast-btn:active { opacity: 0.8; }
+        .toast-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+        .toast-btn.reject { background: #F5F5F5; color: #666; }
+        .toast-btn.accept { background: #FF6B35; color: white; }
         
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F5F0EB; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F0F0F0; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
-        .nav-item i { font-size: 22px; color: #A8A29E; }
-        .nav-item span { font-size: 11px; color: #A8A29E; }
-        .nav-item.active i, .nav-item.active span { color: #F97316; }
-        .publish-btn { width: 56px; height: 56px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); margin-top: -20px; }
-        .publish-btn i { font-size: 24px; color: white; }
+        .nav-item i { font-size: 22px; color: #999; }
+        .nav-item span { font-size: 11px; color: #999; }
+        .nav-item.active i, .nav-item.active span { color: #FF6B35; }
+        .publish-btn { width: 48px; height: 48px; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-top: -16px; }
+        .publish-btn i { font-size: 22px; color: white; }
         
-        .empty-state { text-align: center; padding: 40px 24px; }
-        .empty-icon { width: 64px; height: 64px; background: #FFEDD5; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; }
-        .empty-icon i { font-size: 28px; color: #F97316; }
-        .empty-title { font-size: 16px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
-        .empty-desc { font-size: 14px; color: #78716C; }
+        .empty-state { text-align: center; padding: 60px 24px; }
+        .empty-icon { width: 64px; height: 64px; background: #F5F5F5; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; }
+        .empty-icon i { font-size: 28px; color: #CCC; }
+        .empty-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 4px; }
+        .empty-desc { font-size: 14px; color: #999; }
     </style>
 </head>
 <body>
@@ -111,10 +110,7 @@
                 <div class="toast-countdown" id="countdown">5</div>
             </div>
             <div class="toast-content">
-                <div class="toast-memory">
-                    <span class="toast-memory-icon">🏃</span>
-                    <span class="toast-memory-text">喜欢周末运动，经常打羽毛球和跑步</span>
-                </div>
+                <div class="toast-memory-text">喜欢周末运动，经常打羽毛球和跑步</div>
             </div>
             <div class="toast-actions">
                 <button class="toast-btn reject" onclick="rejectMemory()">忽略</button>
@@ -150,7 +146,6 @@
         let currentCategory = 'all';
         let countdownTimer = null;
 
-        // 初始化
         renderCategoryTabs();
         renderMemoryList();
 
@@ -202,24 +197,73 @@
             }
 
             container.innerHTML = memories.map(item => `
-                <div class="memory-card">
-                    <div class="memory-header">
-                        <div class="memory-icon">${item.icon}</div>
-                        <div class="memory-content">
-                            <div class="memory-title">${item.content}</div>
-                            ${item.detail ? `<div class="memory-detail">${item.detail}</div>` : ''}
+                <div class="memory-card-wrapper" data-id="${item.id}">
+                    <div class="memory-card" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+                        <div class="memory-text">
+                            ${item.content}${item.detail ? `<div class="detail">${item.detail}</div>` : ''}
                         </div>
                     </div>
-                    <div class="memory-meta">
-                        <div class="memory-time">${item.time}</div>
-                        <div class="memory-actions">
-                            <button class="memory-action edit" onclick="editMemory('${item.id}')">编辑</button>
-                            <button class="memory-action delete" onclick="deleteMemory('${item.id}')">删除</button>
+                    <div class="card-actions">
+                        <div class="card-action edit" onclick="editMemory('${item.id}')">
+                            <i class="fas fa-pen"></i>
+                            <span>编辑</span>
+                        </div>
+                        <div class="card-action delete" onclick="deleteMemory('${item.id}')">
+                            <i class="fas fa-trash"></i>
+                            <span>删除</span>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
+
+        // 左滑交互
+        let startX = 0, currentX = 0, swiping = false, currentCard = null;
+
+        function handleTouchStart(e) {
+            startX = e.touches[0].clientX;
+            swiping = true;
+            currentCard = e.currentTarget;
+        }
+
+        function handleTouchMove(e) {
+            if (!swiping || !currentCard) return;
+            currentX = e.touches[0].clientX;
+            const diff = startX - currentX;
+            
+            if (diff > 0) {
+                const translateX = Math.min(diff, 120);
+                currentCard.style.transform = `translateX(-${translateX}px)`;
+            } else if (diff < 0 && currentCard.classList.contains('swiped')) {
+                currentCard.style.transform = `translateX(-${120 + diff}px)`;
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!swiping || !currentCard) return;
+            const diff = startX - currentX;
+            
+            if (diff > 60) {
+                currentCard.classList.add('swiped');
+                currentCard.style.transform = 'translateX(-120px)';
+            } else {
+                currentCard.classList.remove('swiped');
+                currentCard.style.transform = 'translateX(0)';
+            }
+            
+            swiping = false;
+            currentCard = null;
+        }
+
+        // 点击空白处收起
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.memory-card-wrapper')) {
+                document.querySelectorAll('.memory-card.swiped').forEach(card => {
+                    card.classList.remove('swiped');
+                    card.style.transform = 'translateX(0)';
+                });
+            }
+        });
 
         function selectCategory(category) {
             currentCategory = category;
@@ -238,15 +282,12 @@
             countdownTimer = setInterval(() => {
                 seconds--;
                 countdown.textContent = seconds;
-                if (seconds <= 0) {
-                    acceptMemory();
-                }
+                if (seconds <= 0) acceptMemory();
             }, 1000);
         }
 
         function hideMemoryToast() {
-            const toast = document.getElementById('memoryToast');
-            toast.classList.remove('show');
+            document.getElementById('memoryToast').classList.remove('show');
             if (countdownTimer) {
                 clearInterval(countdownTimer);
                 countdownTimer = null;
@@ -255,12 +296,11 @@
 
         function acceptMemory() {
             hideMemoryToast();
-            alert('✅ 记忆已保存到记忆库！');
+            renderMemoryList();
         }
 
         function rejectMemory() {
             hideMemoryToast();
-            alert('已忽略该记忆');
         }
 
         function addMemory() {
@@ -268,7 +308,6 @@
             const text = input.value.trim();
             if (!text) return;
             
-            // 触发记忆弹窗演示
             document.querySelector('.toast-memory-text').textContent = text;
             showMemoryToast();
             input.value = '';
@@ -280,7 +319,12 @@
 
         function deleteMemory(id) {
             if (confirm('确定要删除这条记忆吗？')) {
-                alert('已删除记忆：' + id);
+                // 从数据中删除
+                Object.keys(MOCK_DATA.memory).forEach(cat => {
+                    MOCK_DATA.memory[cat] = MOCK_DATA.memory[cat].filter(item => item.id !== id);
+                });
+                renderCategoryTabs();
+                renderMemoryList();
             }
         }
     </script>
