@@ -8,75 +8,61 @@
     <title>记忆库 - 邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body { background: #F5F5F5; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #F5F5F5; padding-bottom: 140px; }
+        body { background: var(--bg-base); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); padding-bottom: 160px; }
         
-        .header { background: #FFFFFF; padding: 16px; position: sticky; top: 0; z-index: 100; }
-        .header-title { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+        .header { background: var(--bg-card); padding: 20px 16px 16px; position: sticky; top: 0; z-index: 100; }
+        .header-title { font-size: 22px; font-weight: 700; color: var(--text-primary); }
         
-        .category-tabs { display: flex; gap: 8px; padding: 12px 16px; overflow-x: auto; background: #FFFFFF; }
+        .category-tabs { display: flex; gap: 8px; padding: 12px 16px; overflow-x: auto; background: var(--bg-card); -webkit-overflow-scrolling: touch; }
         .category-tabs::-webkit-scrollbar { display: none; }
-        .category-tab { flex-shrink: 0; padding: 8px 14px; background: #F5F5F5; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
-        .category-tab.active { background: #FF6B35; color: white; }
-        .category-tab .count { background: rgba(0,0,0,0.1); padding: 1px 6px; border-radius: 8px; font-size: 11px; }
-        .category-tab.active .count { background: rgba(255,255,255,0.3); }
+        .category-tab { flex-shrink: 0; padding: 8px 14px; background: var(--bg-muted); border-radius: var(--radius-full); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px; }
+        .category-tab.active { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
+        .category-tab .count { background: rgba(0,0,0,0.08); padding: 2px 7px; border-radius: var(--radius-full); font-size: 11px; font-weight: 500; }
+        .category-tab.active .count { background: rgba(255,255,255,0.25); }
         
         .memory-list { padding: 8px 16px; }
         
         /* 记忆卡片 - 左滑删除 */
-        .memory-card-wrapper { position: relative; margin-bottom: 8px; overflow: hidden; border-radius: 12px; }
-        .memory-card { background: #FFFFFF; padding: 14px 16px; position: relative; z-index: 1; transition: transform 0.2s ease; touch-action: pan-y; }
+        .memory-card-wrapper { position: relative; margin-bottom: 8px; overflow: hidden; border-radius: var(--radius-xl); }
+        .memory-card { background: var(--bg-card); padding: 16px 18px; position: relative; z-index: 1; transition: transform 0.25s ease; touch-action: pan-y; box-shadow: var(--shadow-xs); }
         .memory-card.swiped { transform: translateX(-120px); }
         
-        .memory-text { font-size: 15px; color: #1a1a1a; line-height: 1.5; }
+        .memory-text { font-size: 15px; color: var(--text-primary); line-height: 1.6; }
         
         /* 操作按钮层 */
         .card-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; z-index: 0; }
-        .card-action { width: 60px; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
-        .card-action.edit { background: #F5F5F5; color: #666; }
-        .card-action.delete { background: #FF4757; color: white; }
-        .card-action i { font-size: 18px; margin-bottom: 4px; }
-        .card-action span { font-size: 11px; }
+        .card-action { width: 60px; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .card-action.edit { background: var(--bg-muted); color: var(--text-secondary); }
+        .card-action.delete { background: var(--error); color: white; }
+        .card-action i { font-size: 16px; margin-bottom: 4px; }
+        .card-action span { font-size: 11px; font-weight: 500; }
         
-        .input-area { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: #FFFFFF; border-top: 1px solid #F0F0F0; padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 100; }
-        .input-box { display: flex; align-items: center; gap: 10px; background: #F5F5F5; border-radius: 20px; padding: 10px 14px; }
-        .input-box input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: #1a1a1a; }
-        .input-box input::placeholder { color: #999; }
-        .send-btn { width: 36px; height: 36px; background: #FF6B35; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; }
+        .input-area { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 0.5px solid var(--border-light); padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 100; }
+        .input-box { display: flex; align-items: center; gap: 10px; background: var(--bg-muted); border-radius: var(--radius-full); padding: 12px 16px; }
+        .input-box input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: var(--text-primary); }
+        .input-box input::placeholder { color: var(--text-muted); }
+        .send-btn { width: 38px; height: 38px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; box-shadow: var(--shadow-sm); }
         .send-btn i { font-size: 14px; color: white; }
         
         /* 记忆弹窗 */
-        .memory-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 343px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); padding: 16px; z-index: 200; opacity: 0; transform: translateX(-50%) translateY(-20px); transition: all 0.3s ease; pointer-events: none; }
+        .memory-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 343px; background: var(--bg-card); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); padding: 18px; z-index: 200; opacity: 0; transform: translateX(-50%) translateY(-20px); transition: all 0.3s ease; pointer-events: none; }
         .memory-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-        .toast-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .toast-icon { width: 40px; height: 40px; background: #FFF5EB; border-radius: 10px; display: flex; justify-content: center; align-items: center; }
-        .toast-icon i { font-size: 18px; color: #FF6B35; }
+        .toast-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .toast-icon { width: 42px; height: 42px; background: var(--primary-bg); border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; }
+        .toast-icon i { font-size: 18px; color: var(--primary); }
         .toast-title { flex: 1; }
-        .toast-title h3 { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
-        .toast-title p { font-size: 13px; color: #999; }
-        .toast-countdown { width: 32px; height: 32px; border-radius: 50%; background: #FF6B35; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: white; }
-        .toast-content { background: #F5F5F5; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
-        .toast-memory-text { font-size: 14px; color: #1a1a1a; line-height: 1.5; }
-        .toast-actions { display: flex; gap: 8px; }
-        .toast-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
-        .toast-btn.reject { background: #F5F5F5; color: #666; }
-        .toast-btn.accept { background: #FF6B35; color: white; }
-        
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F0F0F0; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
-        .nav-item i { font-size: 22px; color: #999; }
-        .nav-item span { font-size: 11px; color: #999; }
-        .nav-item.active i, .nav-item.active span { color: #FF6B35; }
-        .publish-btn { width: 48px; height: 48px; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-top: -16px; }
-        .publish-btn i { font-size: 22px; color: white; }
-        
-        .empty-state { text-align: center; padding: 60px 24px; }
-        .empty-icon { width: 64px; height: 64px; background: #F5F5F5; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; }
-        .empty-icon i { font-size: 28px; color: #CCC; }
-        .empty-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 4px; }
-        .empty-desc { font-size: 14px; color: #999; }
+        .toast-title h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .toast-title p { font-size: 13px; color: var(--text-muted); }
+        .toast-countdown { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: white; }
+        .toast-content { background: var(--bg-muted); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px; }
+        .toast-memory-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
+        .toast-actions { display: flex; gap: 10px; }
+        .toast-btn { flex: 1; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .toast-btn.reject { background: var(--bg-muted); color: var(--text-secondary); }
+        .toast-btn.accept { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
     </style>
 </head>
 <body>
@@ -92,9 +78,9 @@
         <div class="input-area">
             <div class="input-box">
                 <input type="text" id="memoryInput" placeholder="告诉分身更多关于你的事...">
-                <button class="send-btn" onclick="addMemory()">
+                <div class="send-btn" onclick="addMemory()">
                     <i class="fas fa-paper-plane"></i>
-                </button>
+                </div>
             </div>
         </div>
 
@@ -316,7 +302,6 @@
 
         function deleteMemory(id) {
             if (confirm('确定要删除这条记忆吗？')) {
-                // 从数据中删除
                 Object.keys(MOCK_DATA.memory).forEach(cat => {
                     MOCK_DATA.memory[cat] = MOCK_DATA.memory[cat].filter(item => item.id !== id);
                 });

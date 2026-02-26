@@ -4,65 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>我的 - 邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        body { background: #FFFBF5; }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #FFFBF5; padding-bottom: 80px; }
+        body { background: var(--bg-base); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); padding-bottom: 100px; }
         
-        .profile-header { background: #FFFFFF; padding: 24px 16px; text-align: center; border-bottom: 1px solid #F5F0EB; }
-        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: #FFEDD5; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; }
-        .profile-avatar i { font-size: 36px; color: #F97316; }
-        .profile-name { font-size: 20px; font-weight: 700; color: #3D2914; margin-bottom: 4px; }
-        .profile-meta { font-size: 14px; color: #78716C; }
+        /* 头部个人信息 */
+        .profile-header { background: linear-gradient(135deg, #1F2937 0%, #374151 100%); padding: 32px 20px 24px; text-align: center; }
+        .profile-avatar { width: 72px; height: 72px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; box-shadow: 0 4px 16px rgba(224, 123, 57, 0.3); }
+        .profile-avatar i { font-size: 32px; color: white; }
+        .profile-name { font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px; }
+        .profile-meta { font-size: 13px; color: rgba(255,255,255,0.7); }
         
-        .stats-row { display: flex; justify-content: center; gap: 20px; padding: 20px 16px; background: #FFFFFF; margin-bottom: 12px; }
-        .stat-item { text-align: center; cursor: pointer; }
-        .stat-value { font-size: 22px; font-weight: 700; color: #F97316; }
-        .stat-label { font-size: 11px; color: #A8A29E; margin-top: 4px; }
+        /* 统计行 */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg-card); margin: -20px 16px 0; border-radius: var(--radius-xl); padding: 20px 12px; box-shadow: var(--shadow-md); position: relative; z-index: 10; }
+        .stat-item { text-align: center; cursor: pointer; padding: 8px; transition: all 0.2s; }
+        .stat-item:active { transform: scale(0.95); }
+        .stat-value { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+        .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
         
-        .section { background: #FFFFFF; margin-bottom: 12px; }
-        .section-title { font-size: 14px; font-weight: 600; color: #A8A29E; padding: 12px 16px 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* 区块 */
+        .section { padding: 20px 16px 0; }
+        .section-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; padding-left: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .menu-item { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #F5F0EB; cursor: pointer; transition: background 0.2s; }
-        .menu-item:last-child { border-bottom: none; }
-        .menu-item:active { background: #FFFBF5; }
-        .menu-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 12px; }
-        .menu-icon.orange { background: #FFEDD5; color: #F97316; }
-        .menu-icon.green { background: #DCFCE7; color: #22C55E; }
-        .menu-icon.blue { background: #DBEAFE; color: #3B82F6; }
-        .menu-icon.gray { background: #F5F0EB; color: #78716C; }
-        .menu-content { flex: 1; }
-        .menu-title { font-size: 15px; font-weight: 600; color: #3D2914; margin-bottom: 2px; }
-        .menu-desc { font-size: 13px; color: #A8A29E; }
-        .menu-arrow { color: #E7E0DA; }
-        .menu-badge { background: #EF4444; color: white; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 8px; }
+        /* 匹配预览 */
+        .match-preview { padding: 0 0 16px; }
+        .match-card { display: flex; align-items: center; padding: 14px 16px; background: var(--bg-card); border-radius: var(--radius-lg); margin-bottom: 8px; box-shadow: var(--shadow-xs); cursor: pointer; transition: all 0.2s; }
+        .match-card:active { transform: scale(0.99); }
+        .match-avatar { width: 44px; height: 44px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px; flex-shrink: 0; }
+        .match-avatar i { font-size: 18px; color: white; }
+        .match-info { flex: 1; min-width: 0; }
+        .match-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .match-status { font-size: 12px; color: var(--text-muted); }
+        .match-score { font-size: 15px; font-weight: 700; }
+        .match-score.success { color: var(--success); }
+        .match-score.pending { color: var(--warm); }
+        .match-score.rejected { color: var(--text-muted); }
         
-        .match-preview { padding: 0 16px 16px; }
-        .match-card { display: flex; align-items: center; padding: 12px; background: #FFFBF5; border-radius: 12px; margin-bottom: 8px; }
-        .match-avatar { width: 40px; height: 40px; border-radius: 50%; background: #FFEDD5; display: flex; justify-content: center; align-items: center; margin-right: 12px; }
-        .match-avatar i { font-size: 18px; color: #F97316; }
-        .match-info { flex: 1; }
-        .match-name { font-size: 14px; font-weight: 600; color: #3D2914; }
-        .match-status { font-size: 12px; color: #78716C; }
-        .match-score { font-size: 14px; font-weight: 700; color: #22C55E; }
-        
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F5F0EB; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
-        .nav-item i { font-size: 22px; color: #A8A29E; }
-        .nav-item span { font-size: 11px; color: #A8A29E; }
-        .nav-item.active i, .nav-item.active span { color: #F97316; }
-        .publish-btn { width: 56px; height: 56px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); margin-top: -20px; }
-        .publish-btn i { font-size: 24px; color: white; }
+        /* 菜单项 */
+        .menu-item { display: flex; align-items: center; padding: 16px; background: var(--bg-card); border-radius: var(--radius-lg); margin-bottom: 8px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-xs); }
+        .menu-item:active { transform: scale(0.99); }
+        .menu-icon { width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; margin-right: 12px; flex-shrink: 0; }
+        .menu-icon.primary { background: var(--primary-bg); }
+        .menu-icon.primary i { color: var(--primary); }
+        .menu-icon.accent { background: var(--accent-light); }
+        .menu-icon.accent i { color: var(--accent); }
+        .menu-icon.warm { background: var(--warm-light); }
+        .menu-icon.warm i { color: var(--warm); }
+        .menu-icon i { font-size: 16px; }
+        .menu-content { flex: 1; min-width: 0; }
+        .menu-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .menu-desc { font-size: 12px; color: var(--text-muted); }
+        .menu-arrow { color: var(--text-muted); font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="phone-frame">
         <div class="profile-header">
             <div class="profile-avatar"><i class="fas fa-robot"></i></div>
-            <div class="profile-name">我的分身 🤖</div>
+            <div class="profile-name">我的分身</div>
             <div class="profile-meta">万科金域蓝湾 · 业主</div>
         </div>
 
@@ -76,12 +80,12 @@
                 <div class="stat-label">记忆条数</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">5</div>
-                <div class="stat-label">我的发布</div>
+                <div class="stat-value">23</div>
+                <div class="stat-label">互动次数</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">28</div>
-                <div class="stat-label">我的点赞</div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">好评度</div>
             </div>
         </div>
 
@@ -89,7 +93,9 @@
             <div class="section-title">最近匹配</div>
             <div class="match-preview" id="matchPreview"></div>
             <div class="menu-item" onclick="location.href='matches.html'">
-                <div class="menu-icon orange"><i class="fas fa-handshake"></i></div>
+                <div class="menu-icon primary">
+                    <i class="fas fa-handshake"></i>
+                </div>
                 <div class="menu-content">
                     <div class="menu-title">全部匹配记录</div>
                     <div class="menu-desc">本月匹配成功 12 次</div>
@@ -101,34 +107,32 @@
         <div class="section">
             <div class="section-title">设置</div>
             <div class="menu-item" onclick="location.href='onboarding.html'">
-                <div class="menu-icon orange"><i class="fas fa-robot"></i></div>
+                <div class="menu-icon primary">
+                    <i class="fas fa-robot"></i>
+                </div>
                 <div class="menu-content">
                     <div class="menu-title">分身设置</div>
                     <div class="menu-desc">修改名称、头像、沟通风格</div>
                 </div>
                 <i class="fas fa-chevron-right menu-arrow"></i>
             </div>
-            <div class="menu-item">
-                <div class="menu-icon blue"><i class="fas fa-user-cog"></i></div>
+            <div class="menu-item" onclick="location.href='notifications.html'">
+                <div class="menu-icon accent">
+                    <i class="fas fa-bell"></i>
+                </div>
                 <div class="menu-content">
-                    <div class="menu-title">账户设置</div>
-                    <div class="menu-desc">手机号、实名认证</div>
+                    <div class="menu-title">通知设置</div>
+                    <div class="menu-desc">推送、免打扰</div>
                 </div>
                 <i class="fas fa-chevron-right menu-arrow"></i>
             </div>
             <div class="menu-item">
-                <div class="menu-icon gray"><i class="fas fa-question-circle"></i></div>
-                <div class="menu-content">
-                    <div class="menu-title">帮助与反馈</div>
-                    <div class="menu-desc">常见问题、意见反馈</div>
+                <div class="menu-icon warm">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
-                <i class="fas fa-chevron-right menu-arrow"></i>
-            </div>
-            <div class="menu-item">
-                <div class="menu-icon gray"><i class="fas fa-info-circle"></i></div>
                 <div class="menu-content">
-                    <div class="menu-title">关于我们</div>
-                    <div class="menu-desc">版本 1.0.0</div>
+                    <div class="menu-title">隐私与安全</div>
+                    <div class="menu-desc">实名认证、数据管理</div>
                 </div>
                 <i class="fas fa-chevron-right menu-arrow"></i>
             </div>
@@ -166,13 +170,13 @@
             const recentMatches = MOCK_DATA.matches.slice(0, 2);
             
             container.innerHTML = recentMatches.map(item => `
-                <div class="match-card">
+                <div class="match-card" onclick="location.href='chat.html?id=${item.id}'">
                     <div class="match-avatar"><i class="fas fa-robot"></i></div>
                     <div class="match-info">
                         <div class="match-name">${item.agentName}</div>
-                        <div class="match-status">${item.title} · ${item.status === 'completed' ? '已完成' : item.status === 'confirmed' ? '已确认' : '待确认'}</div>
+                        <div class="match-status">${item.title} · ${item.time}</div>
                     </div>
-                    <div class="match-score">${item.score}%</div>
+                    <div class="match-score ${item.status}">${item.score}%</div>
                 </div>
             `).join('');
         }

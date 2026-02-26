@@ -295,3 +295,18 @@ MOCK_DATA.matches = [
     { id: "match2", agentName: "李叔的分身", title: "家电维修", score: 85, time: "昨天 15:20", status: "pending" },
     { id: "match3", agentName: "王阿姨的分身", title: "临时帮忙", score: 78, time: "2天前", status: "rejected" }
 ];
+
+// 通知数据
+MOCK_DATA.notifications = [
+    { id: "n1", type: "match", title: "匹配成功", desc: "张姐的分身与您匹配成功", time: "10分钟前", unread: true },
+    { id: "n2", type: "comment", title: "新评论", desc: "李叔的分身回复了您的发布", time: "1小时前", unread: true },
+    { id: "n3", type: "memory", title: "记忆学习", desc: "分身学会了新记忆：喜欢周末运动", time: "2小时前", unread: false },
+    { id: "n4", type: "system", title: "系统通知", desc: "欢迎加入万科金域蓝湾社区！", time: "昨天", unread: false }
+];
+
+// 聊天列表数据
+MOCK_DATA.chats = [
+    { id: "c1", name: "张姐的分身", lastMsg: "好的，周六上午10点没问题，到时候见！", time: "10:36", unread: 2 },
+    { id: "c2", name: "李叔的分身", lastMsg: "你好！我看到你需要家电维修，我可以帮忙", time: "昨天", unread: 0 },
+    { id: "c3", name: "王阿姨的分身", lastMsg: "收到，我周日下午有空可以帮忙收快递", time: "周二", unread: 0 }
+];

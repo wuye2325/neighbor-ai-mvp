@@ -8,533 +8,251 @@
     <title>发布 - 邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #FFFBF5;
-            margin: 0;
-            padding: 0;
-        }
-        .phone-frame {
-            width: 100%;
-            max-width: 375px;
-            min-height: 100vh;
-            margin: 0 auto;
-            background: #fff;
-            position: relative;
-            overflow: hidden;
-        }
-        .header {
-            height: 56px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            background: white;
-            border-bottom: 1px solid #F5F0EB;
-        }
-        .back-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .back-btn:active {
-            background: #F5F0EB;
-        }
-        .header-title {
-            flex: 1;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 600;
-            color: #3D2914;
-            margin-right: 40px;
-        }
+        body { background: var(--bg-base); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); }
         
-        /* Type Selection */
-        .type-selection {
-            display: flex;
-            padding: 20px 16px;
-            gap: 12px;
-        }
-        .type-btn {
-            flex: 1;
-            padding: 20px;
-            border: 2px solid #E7E0DA;
-            border-radius: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .type-btn.selected {
-            border-color: #F97316;
-            background: #FFFBF5;
-        }
-        .type-btn i {
-            font-size: 32px;
-            color: #F97316;
-            margin-bottom: 8px;
-        }
-        .type-btn h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #3D2914;
-            margin-bottom: 4px;
-        }
-        .type-btn p {
-            font-size: 12px;
-            color: #78716C;
-        }
+        /* 顶部导航 */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--bg-card); position: sticky; top: 0; z-index: 100; }
+        .nav-close { width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-muted); }
+        .nav-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+        .nav-publish { font-size: 15px; font-weight: 600; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--primary-bg); border-radius: var(--radius-full); }
         
-        /* Form */
-        .form-section {
-            padding: 0 16px 24px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #3D2914;
-            margin-bottom: 8px;
-        }
-        .form-input {
-            width: 100%;
-            height: 52px;
-            border: 2px solid #E7E0DA;
-            border-radius: 12px;
-            padding: 0 16px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-input:focus {
-            border-color: #F97316;
-        }
-        .form-textarea {
-            width: 100%;
-            min-height: 120px;
-            border: 2px solid #E7E0DA;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 16px;
-            outline: none;
-            resize: none;
-            font-family: inherit;
-            line-height: 1.5;
-        }
-        .form-textarea:focus {
-            border-color: #F97316;
-        }
+        /* Tab切换 */
+        .tab-switch { display: flex; background: var(--bg-muted); margin: 16px; border-radius: var(--radius-lg); padding: 4px; }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 15px; font-weight: 600; color: var(--text-secondary); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; }
+        .tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
         
-        /* Category Selection */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .category-item {
-            padding: 16px 8px;
-            border: 2px solid #E7E0DA;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .category-item.selected {
-            border-color: #F97316;
-            background: #FFFBF5;
-        }
-        .category-item span {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 6px;
-        }
-        .category-item h4 {
-            font-size: 13px;
-            font-weight: 600;
-            color: #3D2914;
-        }
+        /* 表单区域 */
+        .form-section { padding: 0 16px 16px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 14px 16px; font-size: 15px; color: var(--text-primary); background: var(--bg-card); border: 1.5px solid var(--border-light); border-radius: var(--radius-lg); outline: none; transition: all 0.2s ease; }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+        .form-input::placeholder { color: var(--text-muted); }
+        .form-textarea { min-height: 120px; resize: none; line-height: 1.6; }
         
-        /* Price Input */
-        .price-input-group {
-            display: flex;
-            gap: 12px;
-        }
-        .price-input-group .form-input {
-            flex: 1;
-        }
-        .price-type {
-            display: flex;
-            gap: 8px;
-        }
-        .price-type-btn {
-            padding: 0 16px;
-            height: 52px;
-            border: 2px solid #E7E0DA;
-            border-radius: 12px;
-            background: white;
-            font-size: 14px;
-            font-weight: 600;
-            color: #78716C;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .price-type-btn.selected {
-            border-color: #F97316;
-            background: #F97316;
-            color: white;
-        }
+        /* 图片上传 */
+        .image-upload { display: flex; gap: 10px; flex-wrap: wrap; }
+        .image-item { width: 80px; height: 80px; border-radius: var(--radius-md); overflow: hidden; position: relative; }
+        .image-item img { width: 100%; height: 100%; object-fit: cover; }
+        .image-item .remove { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .image-item .remove i { font-size: 10px; color: white; }
+        .image-add { width: 80px; height: 80px; background: var(--bg-muted); border: 2px dashed var(--border-default); border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .image-add:active { background: var(--border-light); }
+        .image-add i { font-size: 24px; color: var(--text-muted); margin-bottom: 4px; }
+        .image-add span { font-size: 11px; color: var(--text-muted); }
         
-        /* Voice Input */
-        .voice-input {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #FFFBF5;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-        .voice-btn {
-            width: 48px;
-            height: 48px;
-            background: #F97316;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-        .voice-btn i {
-            font-size: 20px;
-            color: white;
-        }
-        .voice-text {
-            flex: 1;
-            font-size: 14px;
-            color: #78716C;
-        }
+        /* 分类选择 */
+        .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .category-item { padding: 12px 8px; text-align: center; background: var(--bg-card); border: 1.5px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; }
+        .category-item.active { border-color: var(--primary); background: var(--primary-bg); }
+        .category-item i { font-size: 20px; color: var(--text-muted); margin-bottom: 6px; display: block; }
+        .category-item.active i { color: var(--primary); }
+        .category-item span { font-size: 12px; color: var(--text-secondary); }
+        .category-item.active span { color: var(--primary); }
         
-        /* AI Tags Preview */
-        .ai-preview {
-            background: #FFEDD5;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 16px;
-        }
-        .ai-preview-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #F97316;
-            margin-bottom: 12px;
-        }
-        .ai-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .ai-tag {
-            background: white;
-            color: #F97316;
-            font-size: 13px;
-            padding: 6px 12px;
-            border-radius: 16px;
-        }
+        /* 价格输入 */
+        .price-row { display: flex; gap: 12px; }
+        .price-input { flex: 1; }
+        .unit-select { width: 100px; }
         
-        /* Submit Button */
-        .submit-section {
-            padding: 16px;
-            background: white;
-            border-top: 1px solid #F5F0EB;
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 375px;
-        }
-        .btn-submit {
-            width: 100%;
-            height: 52px;
-            background: #F97316;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
+        /* AI 提示 */
+        .ai-tip { background: var(--primary-bg); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
+        .ai-tip-icon { width: 36px; height: 36px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .ai-tip-icon i { font-size: 16px; color: white; }
+        .ai-tip-content { flex: 1; }
+        .ai-tip-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+        .ai-tip-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
         
-        /* Success Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-overlay.show {
-            display: flex;
-        }
-        .modal-content {
-            width: 320px;
-            background: white;
-            border-radius: 20px;
-            padding: 32px 24px;
-            text-align: center;
-        }
-        .modal-icon {
-            width: 80px;
-            height: 80px;
-            background: #10b981;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px;
-        }
-        .modal-icon i {
-            font-size: 36px;
-            color: white;
-        }
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #3D2914;
-            margin-bottom: 12px;
-        }
-        .modal-text {
-            font-size: 15px;
-            color: #78716C;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-        .modal-btn {
-            width: 100%;
-            height: 48px;
-            background: #F97316;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F5F0EB; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
-.nav-item i { font-size: 22px; color: #A8A29E; }
-.nav-item span { font-size: 11px; color: #A8A29E; }
-.nav-item.active i, .nav-item.active span { color: #F97316; }
-.publish-btn { width: 56px; height: 56px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); margin-top: -20px; }
-.publish-btn i { font-size: 24px; color: white; }
+        /* 发布按钮 */
+        .submit-area { padding: 20px 16px; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--bg-card); border-top: 0.5px solid var(--border-light); }
+        .submit-btn { width: 100%; height: 54px; background: var(--primary-gradient); border: none; border-radius: var(--radius-xl); color: white; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: var(--shadow-md); transition: all 0.2s; }
+        .submit-btn:active { transform: scale(0.98); box-shadow: var(--shadow-sm); }
     </style>
 </head>
 <body>
     <div class="phone-frame">
-        <div class="header">
-            <div class="back-btn" onclick="history.back()">
-                <i class="fas fa-times" style="font-size: 20px; color: #78716C;"></i>
+        <div class="top-nav">
+            <div class="nav-close" onclick="location.href='hall.html'">
+                <i class="fas fa-times"></i>
             </div>
-            <div class="header-title">发布</div>
+            <div class="nav-title">发布</div>
+            <div class="nav-publish" onclick="submitForm()">发布</div>
         </div>
 
-        <!-- Type Selection -->
-        <div class="type-selection">
-            <div class="type-btn selected" onclick="selectType(this, 'need')">
-                <i class="fas fa-hand-paper"></i>
-                <h3>我需要</h3>
-                <p>发布你的需求</p>
-            </div>
-            <div class="type-btn" onclick="selectType(this, 'provide')">
-                <i class="fas fa-hand-holding-heart"></i>
-                <h3>我提供</h3>
-                <p>分享你的资源</p>
+        <!-- Tab切换 -->
+        <div class="tab-switch">
+            <div class="tab-btn active" onclick="switchType('provide')">我可以提供</div>
+            <div class="tab-btn" onclick="switchType('need')">我需要帮助</div>
+        </div>
+
+        <!-- AI 提示 -->
+        <div class="form-section">
+            <div class="ai-tip">
+                <div class="ai-tip-icon"><i class="fas fa-magic"></i></div>
+                <div class="ai-tip-content">
+                    <div class="ai-tip-title">AI 分身小贴士</div>
+                    <div class="ai-tip-text">描述越详细，分身匹配越精准哦~ 我会自动帮你打标签、推荐给合适的邻居</div>
+                </div>
             </div>
         </div>
 
-        <!-- Form -->
-        <div class="form-section" style="padding-bottom: 100px;">
-            <!-- Voice Input -->
-            <div class="voice-input">
-                <div class="voice-btn" onclick="startVoice()">
-                    <i class="fas fa-microphone"></i>
-                </div>
-                <div class="voice-text">
-                    点击语音输入，让 AI 帮你整理描述
-                </div>
-            </div>
-
-            <!-- Category -->
-            <div class="form-group">
-                <label class="form-label">选择分类</label>
-                <div class="category-grid">
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <span>🏠</span>
-                        <h4>生活服务</h4>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <span>🎓</span>
-                        <h4>技能交换</h4>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <span>📦</span>
-                        <h4>物品流转</h4>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <span>🆘</span>
-                        <h4>临时求助</h4>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <span>💡</span>
-                        <h4>信息共享</h4>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <span>🎯</span>
-                        <h4>其他</h4>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Title -->
+        <div class="form-section">
+            <!-- 标题 -->
             <div class="form-group">
                 <label class="form-label">标题</label>
-                <input type="text" class="form-input" placeholder="一句话描述你的需求或服务">
+                <input type="text" class="form-input" id="title" placeholder="一句话说清楚，如：周末可以帮忙遛狗">
             </div>
 
-            <!-- Description -->
+            <!-- 描述 -->
             <div class="form-group">
                 <label class="form-label">详细描述</label>
-                <textarea class="form-textarea" placeholder="详细说明时间、地点、要求等..."></textarea>
+                <textarea class="form-input form-textarea" id="desc" placeholder="详细说明一下，方便邻居了解~"></textarea>
             </div>
 
-            <!-- Price -->
+            <!-- 图片 -->
             <div class="form-group">
-                <label class="form-label">定价</label>
-                <div class="price-type" style="margin-bottom: 12px;">
-                    <button class="price-type-btn selected" onclick="selectPriceType(this, 'cash')">💰 付费</button>
-                    <button class="price-type-btn" onclick="selectPriceType(this, 'free')">🆓 免费</button>
-                    <button class="price-type-btn" onclick="selectPriceType(this, 'exchange')">🔄 交换</button>
+                <label class="form-label">图片 <span style="font-weight: 400; color: var(--text-muted);">（选填，最多9张）</span></label>
+                <div class="image-upload" id="imageUpload">
+                    <div class="image-add" onclick="addImage()">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
                 </div>
-                <div class="price-input-group">
-                    <input type="number" class="form-input" placeholder="金额">
-                    <select class="form-input" style="width: 80px;">
-                        <option>元/次</option>
-                        <option>元/小时</option>
-                        <option>元/天</option>
-                        <option>元/份</option>
+            </div>
+
+            <!-- 分类 -->
+            <div class="form-group">
+                <label class="form-label">分类</label>
+                <div class="category-grid">
+                    <div class="category-item active" onclick="selectCategory(this)">
+                        <i class="fas fa-home"></i>
+                        <span>生活服务</span>
+                    </div>
+                    <div class="category-item" onclick="selectCategory(this)">
+                        <i class="fas fa-tools"></i>
+                        <span>技能互助</span>
+                    </div>
+                    <div class="category-item" onclick="selectCategory(this)">
+                        <i class="fas fa-box"></i>
+                        <span>物品借用</span>
+                    </div>
+                    <div class="category-item" onclick="selectCategory(this)">
+                        <i class="fas fa-users"></i>
+                        <span>活动组局</span>
+                    </div>
+                    <div class="category-item" onclick="selectCategory(this)">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <span>临时帮忙</span>
+                    </div>
+                    <div class="category-item" onclick="selectCategory(this)">
+                        <i class="fas fa-info-circle"></i>
+                        <span>信息咨询</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 价格 -->
+            <div class="form-group">
+                <label class="form-label">价格</label>
+                <div class="price-row">
+                    <div class="price-input">
+                        <input type="text" class="form-input" id="price" placeholder="输入金额或留空面议">
+                    </div>
+                    <select class="form-input unit-select" id="unit">
+                        <option>次</option>
+                        <option>小时</option>
+                        <option>天</option>
+                        <option>个</option>
+                        <option>面议</option>
                     </select>
                 </div>
             </div>
-
-            <!-- AI Preview -->
-            <div class="ai-preview">
-                <div class="ai-preview-title">
-                    <i class="fas fa-magic"></i>
-                    <span>AI 自动生成的标签</span>
-                </div>
-                <div class="ai-tags">
-                    <span class="ai-tag">#遛狗</span>
-                    <span class="ai-tag">#宠物</span>
-                    <span class="ai-tag">#周末</span>
-                    <span class="ai-tag">#有偿</span>
-                </div>
-            </div>
         </div>
 
-        <!-- Submit -->
-        <div class="submit-section">
-            <button class="btn-submit" onclick="showSuccess()">
+        <div class="submit-area">
+            <button class="submit-btn" onclick="submitForm()">
                 <i class="fas fa-paper-plane"></i>
-                发布
+                发布并让分身去匹配
             </button>
         </div>
     </div>
 
-    <!-- Success Modal -->
-    <div class="modal-overlay" id="successModal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-check"></i>
-            </div>
-            <h3 class="modal-title">发布成功！</h3>
-            <p class="modal-text">你的分身已经发布，正在帮你匹配合适的邻居...</p>
-            <button class="modal-btn" onclick="goToHall()">查看大厅</button>
-        </div>
-    </div>
-
     <script>
-        function selectType(btn, type) {
-            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
+        let publishType = 'provide';
+        let selectedImages = [];
+
+        function switchType(type) {
+            publishType = type;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 更新提示文案
+            const tip = document.querySelector('.ai-tip-text');
+            if (type === 'provide') {
+                tip.textContent = '描述越详细，分身匹配越精准哦~ 我会自动帮你打标签、推荐给合适的邻居';
+            } else {
+                tip.textContent = '告诉我你需要什么，分身会帮你找到能帮忙的邻居~';
+            }
         }
 
-        function selectCategory(item) {
-            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('selected'));
-            item.classList.add('selected');
+        function selectCategory(el) {
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        function selectPriceType(btn, type) {
-            document.querySelectorAll('.price-type-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
+        function addImage() {
+            if (selectedImages.length >= 9) {
+                alert('最多上传9张图片');
+                return;
+            }
+            
+            // 模拟添加图片
+            const randomId = Math.floor(Math.random() * 100);
+            selectedImages.push(`https://picsum.photos/400/400?random=${randomId}`);
+            renderImages();
         }
 
-        function startVoice() {
-            alert('语音输入功能开发中...');
+        function removeImage(index) {
+            selectedImages.splice(index, 1);
+            renderImages();
         }
 
-        function showSuccess() {
-            document.getElementById('successModal').classList.add('show');
+        function renderImages() {
+            const container = document.getElementById('imageUpload');
+            container.innerHTML = selectedImages.map((img, i) => `
+                <div class="image-item">
+                    <img src="${img}" alt="图片">
+                    <div class="remove" onclick="removeImage(${i})">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            `).join('');
+            
+            if (selectedImages.length < 9) {
+                container.innerHTML += `
+                    <div class="image-add" onclick="addImage()">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                `;
+            }
         }
 
-        function goToHall() {
+        function submitForm() {
+            const title = document.getElementById('title').value.trim();
+            const desc = document.getElementById('desc').value.trim();
+            
+            if (!title) {
+                alert('请填写标题');
+                return;
+            }
+            
+            alert('发布成功！分身正在为你匹配...');
             location.href = 'hall.html';
         }
     </script>
 </body>
 </html>
-
-        <div class="bottom-nav">
-            <div class="nav-item" onclick="location.href='hall.html'">
-                <i class="fas fa-home"></i>
-                <span>大厅</span>
-            </div>
-            <div class="nav-item" onclick="location.href='memory.html'">
-                <i class="fas fa-brain"></i>
-                <span>记忆</span>
-            </div>
-            <div class="nav-item active">
-                <div class="publish-btn"><i class="fas fa-plus"></i></div>
-            </div>
-            <div class="nav-item" onclick="location.href='chat-list.html'">
-                <i class="fas fa-comment-dots"></i>
-                <span>聊天</span>
-            </div>
-            <div class="nav-item" onclick="location.href='profile.html'">
-                <i class="fas fa-user"></i>
-                <span>我的</span>
-            </div>
-        </div>

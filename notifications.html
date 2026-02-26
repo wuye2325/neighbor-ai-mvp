@@ -4,58 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>通知 - 邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        body { background: #FFFBF5; }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #FFFBF5; padding-bottom: 80px; }
+        body { background: var(--bg-base); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); padding-bottom: 100px; }
         
-        .header { background: #FFFFFF; padding: 16px; border-bottom: 1px solid #F5F0EB; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
-        .header-title { font-size: 20px; font-weight: 700; color: #3D2914; }
-        .header-action { font-size: 14px; color: #F97316; cursor: pointer; }
+        .header { display: flex; align-items: center; padding: 16px; background: var(--bg-card); position: sticky; top: 0; z-index: 100; }
+        .back-btn { width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-secondary); }
+        .header-title { flex: 1; font-size: 17px; font-weight: 600; color: var(--text-primary); text-align: center; margin-right: 36px; }
         
-        .notification-list { padding: 16px; }
-        .notification-card { background: #FFFFFF; border: 1px solid #F5F0EB; border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; }
-        .notification-card.unread { border-left: 3px solid #F97316; }
-        .notification-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
-        .notification-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
-        .notification-icon.match { background: #DCFCE7; }
-        .notification-icon.comment { background: #DBEAFE; }
-        .notification-icon.system { background: #FEF3C7; }
-        .notification-icon.memory { background: #FFEDD5; }
-        .notification-content { flex: 1; }
-        .notification-title { font-size: 15px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
-        .notification-text { font-size: 14px; color: #78716C; line-height: 1.5; }
-        .notification-detail { font-size: 13px; color: #F97316; margin-top: 4px; font-weight: 500; }
-        .notification-time { font-size: 12px; color: #A8A29E; margin-top: 8px; }
-        .notification-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F5F0EB; }
-        .notification-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
-        .notification-btn.secondary { background: #F5F0EB; color: #78716C; }
-        .notification-btn.primary { background: #F97316; color: white; }
-        .notification-btn:active { opacity: 0.8; }
+        .notification-list { padding: 8px 16px; }
         
-        .empty-state { text-align: center; padding: 60px 24px; }
-        .empty-icon { width: 80px; height: 80px; background: #FFEDD5; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 16px; }
-        .empty-icon i { font-size: 32px; color: #F97316; }
-        .empty-title { font-size: 18px; font-weight: 600; color: #3D2914; margin-bottom: 8px; }
-        .empty-desc { font-size: 14px; color: #78716C; }
+        .notification-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border-radius: var(--radius-lg); margin-bottom: 8px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-xs); }
+        .notification-item:active { transform: scale(0.99); }
+        .notification-item.unread { background: var(--primary-bg); }
         
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F5F0EB; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
-        .nav-item i { font-size: 22px; color: #A8A29E; }
-        .nav-item span { font-size: 11px; color: #A8A29E; }
-        .nav-item.active i, .nav-item.active span { color: #F97316; }
-        .publish-btn { width: 56px; height: 56px; background: #F97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); margin-top: -20px; }
-        .publish-btn i { font-size: 24px; color: white; }
+        .notification-icon { width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; margin-right: 12px; flex-shrink: 0; }
+        .notification-icon.match { background: var(--accent-light); }
+        .notification-icon.match i { color: var(--accent); }
+        .notification-icon.comment { background: var(--info-bg); }
+        .notification-icon.comment i { color: var(--info); }
+        .notification-icon.memory { background: var(--warm-light); }
+        .notification-icon.memory i { color: var(--warm); }
+        .notification-icon.system { background: var(--bg-muted); }
+        .notification-icon.system i { color: var(--text-muted); }
+        .notification-icon i { font-size: 18px; }
+        
+        .notification-content { flex: 1; min-width: 0; }
+        .notification-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .notification-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+        .notification-time { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+        
+        .unread-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
     </style>
 </head>
 <body>
     <div class="phone-frame">
         <div class="header">
+            <div class="back-btn" onclick="location.href='profile.html'">
+                <i class="fas fa-chevron-left"></i>
+            </div>
             <div class="header-title">通知</div>
-            <div class="header-action" onclick="markAllRead()">全部已读</div>
         </div>
 
         <div class="notification-list" id="notificationList"></div>
@@ -72,7 +65,7 @@
             <div class="nav-item" onclick="location.href='publish.html'">
                 <div class="publish-btn"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="nav-item active">
+            <div class="nav-item" onclick="location.href='chat-list.html'">
                 <i class="fas fa-comment-dots"></i>
                 <span>聊天</span>
             </div>
@@ -89,51 +82,33 @@
 
         function renderNotifications() {
             const container = document.getElementById('notificationList');
-            const notifications = MOCK_DATA.notifications;
-
-            if (notifications.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-comment-dots-slash"></i></div>
-                        <div class="empty-title">暂无通知</div>
-                        <div class="empty-desc">有新消息时会在这里提醒你</div>
+            const notifications = MOCK_DATA.notifications || [
+                { id: "n1", type: "match", icon: "handshake", title: "匹配成功", desc: "张姐的分身与您匹配成功", time: "10分钟前", unread: true },
+                { id: "n2", type: "comment", icon: "comment", title: "新评论", desc: "李叔的分身回复了您的发布", time: "1小时前", unread: true },
+                { id: "n3", type: "memory", icon: "brain", title: "记忆学习", desc: "分身学会了新记忆", time: "2小时前", unread: false },
+                { id: "n4", type: "system", icon: "bell", title: "系统通知", desc: "欢迎加入万科金域蓝湾社区！", time: "昨天", unread: false }
+            ];
+            
+            const iconMap = {
+                'match': 'fa-handshake',
+                'comment': 'fa-comment',
+                'memory': 'fa-brain',
+                'system': 'fa-bell'
+            };
+            
+            container.innerHTML = notifications.map(n => `
+                <div class="notification-item ${n.unread ? 'unread' : ''}">
+                    <div class="notification-icon ${n.type}">
+                        <i class="fas ${iconMap[n.type] || 'fa-bell'}"></i>
                     </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = notifications.map(item => `
-                <div class="notification-card ${item.unread ? 'unread' : ''}">
-                    <div class="notification-header">
-                        <div class="notification-icon ${item.type}">${item.icon}</div>
-                        <div class="notification-content">
-                            <div class="notification-title">${item.title}</div>
-                            <div class="notification-text">${item.content}</div>
-                            ${item.detail ? `<div class="notification-detail">${item.detail}</div>` : ''}
-                        </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${n.title}</div>
+                        <div class="notification-desc">${n.desc}</div>
+                        <div class="notification-time">${n.time}</div>
                     </div>
-                    <div class="notification-time">${item.time}</div>
-                    ${item.type === 'match' ? `
-                        <div class="notification-actions">
-                            <button class="notification-btn secondary" onclick="ignoreMatch('${item.id}')">忽略</button>
-                            <button class="notification-btn primary" onclick="viewMatch('${item.id}')">查看详情</button>
-                        </div>
-                    ` : ''}
+                    ${n.unread ? '<div class="unread-dot"></div>' : ''}
                 </div>
             `).join('');
-        }
-
-        function markAllRead() {
-            MOCK_DATA.notifications.forEach(n => n.unread = false);
-            renderNotifications();
-        }
-
-        function ignoreMatch(id) {
-            alert('已忽略该匹配');
-        }
-
-        function viewMatch(id) {
-            location.href = 'matches.html';
         }
     </script>
 </body>

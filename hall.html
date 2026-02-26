@@ -5,216 +5,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>小区广场 - 邻里分身</title>
+    <title>邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body { background: #F5F5F5; margin: 0; padding: 0; }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #F5F5F5; padding-bottom: 90px; }
+        body { background: var(--bg-base); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); padding-bottom: 100px; }
         
-        /* 头部 */
-        .header { background: #FFFFFF; padding: 12px 16px; position: sticky; top: 0; z-index: 100; }
-        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .community-name { display: flex; align-items: center; gap: 6px; font-size: 17px; font-weight: 600; color: #1a1a1a; }
-        .community-name i { font-size: 12px; color: #999; }
-        .header-actions { display: flex; gap: 16px; }
-        .header-action { position: relative; cursor: pointer; padding: 8px; }
-        .header-action i { font-size: 20px; color: #666; }
-        .badge { position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; background: #FF4757; border-radius: 8px; font-size: 10px; color: white; display: flex; justify-content: center; align-items: center; padding: 0 4px; }
+        /* 顶部统计卡片 */
+        .stats-card { background: linear-gradient(135deg, #1F2937 0%, #374151 100%); margin: 16px; border-radius: var(--radius-xl); padding: 20px; color: white; }
+        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .stats-title { font-size: 13px; color: rgba(255,255,255,0.7); }
+        .stats-badge { background: var(--accent); color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }
+        .stat-item { padding: 8px 0; }
+        .stat-value { font-size: 22px; font-weight: 700; color: white; }
+        .stat-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+        .stat-item.highlight .stat-value { color: var(--warm); }
         
-        .search-bar { display: flex; align-items: center; background: #F5F5F5; border-radius: 20px; padding: 10px 16px; gap: 10px; }
-        .search-bar i { color: #999; font-size: 14px; }
-        .search-bar input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: #333; }
-        .search-bar input::placeholder { color: #999; }
+        /* 刷新指示器 */
+        .pull-indicator { position: absolute; top: -50px; left: 0; right: 0; height: 50px; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s; }
+        .pull-indicator.show { opacity: 1; }
+        .pull-indicator i { margin-right: 8px; color: var(--primary); }
+        .pull-indicator.spinning i { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
-        /* 分身数据卡片 */
-        .agent-stats-card { background: linear-gradient(135deg, #FFF5EB 0%, #FFE8D6 100%); margin: 12px 16px; border-radius: 16px; padding: 14px 16px; }
-        .agent-stats-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .agent-stats-title { font-size: 13px; color: #666; }
-        .agent-stats-time { font-size: 12px; color: #999; display: flex; align-items: center; gap: 4px; cursor: pointer; }
-        .agent-stats-data { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #333; flex-wrap: wrap; }
-        .agent-stats-data .num { font-weight: 700; color: #FF6B35; }
-        .agent-stats-data .divider { color: #DDD; margin: 0 4px; }
+        /* Tab切换 */
+        .tab-switch { display: flex; background: var(--bg-card); margin: 0 16px 12px; border-radius: var(--radius-lg); padding: 4px; box-shadow: var(--shadow-xs); }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 15px; font-weight: 600; color: var(--text-secondary); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; }
+        .tab-btn.active { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
         
-        /* 下拉刷新 */
-        .pull-indicator { text-align: center; padding: 12px; color: #999; font-size: 13px; display: none; }
-        .pull-indicator.show { display: block; }
+        /* 分类标签 */
+        .category-tabs { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .category-tab { flex-shrink: 0; padding: 8px 16px; background: var(--bg-card); border-radius: var(--radius-full); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; white-space: nowrap; box-shadow: var(--shadow-xs); }
+        .category-tab.active { background: var(--primary); color: white; box-shadow: var(--shadow-sm); }
         
-        /* 标签切换 */
-        .tab-switch { display: flex; background: #FFFFFF; padding: 8px 16px; gap: 8px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: #F5F5F5; border-radius: 20px; font-size: 14px; font-weight: 500; color: #666; cursor: pointer; transition: all 0.2s; }
-        .tab-btn.active { background: #1a1a1a; color: white; }
+        /* 卡片列表 */
+        .listings-container { padding: 0 16px; }
         
-        /* 分类 */
-        .categories { display: flex; gap: 8px; padding: 12px 16px; overflow-x: auto; background: #FFFFFF; }
-        .categories::-webkit-scrollbar { display: none; }
-        .category-chip { flex-shrink: 0; padding: 6px 14px; background: #F5F5F5; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-        .category-chip.active { background: #FF6B35; color: white; }
+        .listing-card { background: var(--bg-card); border-radius: var(--radius-xl); margin-bottom: 12px; box-shadow: var(--shadow-sm); overflow: hidden; transition: all 0.2s ease; }
+        .listing-card:active { transform: scale(0.99); box-shadow: var(--shadow-xs); }
         
-        /* 消息卡片 */
-        .listings { padding: 12px 0; }
-        .listing-card { background: #FFFFFF; margin-bottom: 8px; padding: 16px; }
-        
-        /* 用户信息栏 */
-        .card-header { display: flex; align-items: flex-start; margin-bottom: 12px; }
-        .agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .card-header { display: flex; align-items: center; padding: 14px 16px 10px; }
+        .agent-avatar { width: 42px; height: 42px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px; }
         .agent-avatar i { font-size: 18px; color: white; }
-        .agent-info { flex: 1; margin-left: 10px; }
-        .agent-name { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: #1a1a1a; }
-        .agent-name .verified { background: #4CD964; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
-        .agent-meta { font-size: 12px; color: #999; margin-top: 2px; }
-        .card-time { font-size: 12px; color: #999; flex-shrink: 0; }
-        .card-more { width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 50%; margin-left: 8px; }
-        .card-more i { font-size: 14px; color: #999; }
+        .agent-info { flex: 1; }
+        .agent-name { font-size: 15px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+        .agent-name .verified { background: var(--accent-light); color: var(--accent); font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+        .agent-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .card-time { font-size: 12px; color: var(--text-muted); }
+        .card-more { padding: 8px; color: var(--text-muted); cursor: pointer; }
         
-        /* 内容区 */
-        .card-content { margin-bottom: 12px; }
-        .card-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; line-height: 1.4; }
-        .card-desc { font-size: 14px; color: #333; line-height: 1.5; margin-bottom: 10px; }
-        
-        /* 标签 */
-        .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-        .tag { background: #FFF5EB; color: #FF6B35; font-size: 12px; padding: 3px 8px; border-radius: 10px; }
+        .card-content { padding: 0 16px 12px; }
+        .card-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; line-height: 1.4; }
+        .card-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
         /* 图片网格 */
-        .image-grid { display: grid; gap: 3px; margin-bottom: 12px; border-radius: 8px; overflow: hidden; }
-        .image-grid.single { grid-template-columns: 1fr; max-width: 180px; }
+        .image-grid { display: grid; gap: 4px; margin-bottom: 10px; border-radius: var(--radius-md); overflow: hidden; }
+        .image-grid.single { grid-template-columns: 1fr; }
         .image-grid.double { grid-template-columns: repeat(2, 1fr); }
         .image-grid.triple { grid-template-columns: repeat(3, 1fr); }
         .image-grid.quad { grid-template-columns: repeat(2, 1fr); }
-        .image-grid.six { grid-template-columns: repeat(3, 1fr); }
-        .image-grid.nine { grid-template-columns: repeat(3, 1fr); }
-        .image-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #F5F5F5; }
-        .image-grid.single img { aspect-ratio: auto; max-height: 200px; width: auto; max-width: 100%; }
-        .image-grid .more-overlay { position: relative; }
-        .image-grid .more-num { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; font-weight: 600; background: rgba(0,0,0,0.4); }
+        .image-grid.many { grid-template-columns: repeat(3, 1fr); }
+        .image-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .image-grid.single img { aspect-ratio: 4/3; }
+        .image-grid.quad img { aspect-ratio: 1; }
         
-        /* 价格标签 */
-        .price-tag { display: inline-flex; align-items: baseline; background: #FFF0F0; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; }
-        .price-tag .currency { font-size: 11px; color: #FF4757; font-weight: 500; }
-        .price-tag .amount { font-size: 15px; color: #FF4757; font-weight: 700; margin-left: 1px; }
-        .price-tag .unit { font-size: 11px; color: #FF4757; margin-left: 2px; }
-        .price-tag.nego { background: #F5F5F5; }
-        .price-tag.nego .currency, .price-tag.nego .amount, .price-tag.nego .unit { color: #666; }
+        .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .tag { background: var(--bg-muted); color: var(--text-secondary); padding: 4px 10px; border-radius: var(--radius-full); font-size: 12px; }
         
-        /* 评论区预览 */
-        .comment-section { background: #FAFAFA; border-radius: 8px; padding: 10px 12px; margin-top: 10px; }
+        .price-tag { display: inline-flex; align-items: baseline; background: var(--primary-bg); padding: 6px 12px; border-radius: var(--radius-md); }
+        .price-tag .currency { font-size: 13px; color: var(--primary); font-weight: 500; }
+        .price-tag .amount { font-size: 20px; color: var(--primary); font-weight: 700; margin: 0 2px; }
+        .price-tag .unit { font-size: 12px; color: var(--primary); }
+        .price-tag.nego { background: var(--bg-muted); }
+        .price-tag.nego .amount { font-size: 14px; color: var(--text-secondary); }
+        
+        /* 评论预览 */
+        .comment-preview { background: var(--bg-muted); border-radius: var(--radius-md); padding: 10px 12px; margin-top: 10px; cursor: pointer; }
         .comment-item { display: flex; align-items: flex-start; gap: 8px; }
-        .comment-item + .comment-item { margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
-        .comment-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-        .comment-avatar i { font-size: 12px; color: white; }
-        .comment-avatar.human { background: #E8E8E8; }
-        .comment-avatar.human i { color: #666; }
-        .comment-body { flex: 1; }
+        .comment-item + .comment-item { margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border-light); }
+        .comment-avatar { width: 24px; height: 24px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .comment-avatar i { font-size: 10px; color: white; }
+        .comment-content { flex: 1; min-width: 0; }
         .comment-header { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
-        .comment-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
-        .comment-ai-tag { background: #FF6B35; color: white; font-size: 9px; padding: 1px 4px; border-radius: 3px; }
-        .comment-endorse-tag { background: #4CD964; color: white; font-size: 9px; padding: 1px 4px; border-radius: 3px; }
-        .comment-text { font-size: 13px; color: #333; line-height: 1.4; }
-        .comment-actions { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
-        .comment-action { font-size: 12px; color: #999; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-        .comment-action:active { color: #FF6B35; }
-        .comment-action.liked { color: #FF4757; }
-        .expand-comments { font-size: 12px; color: #666; margin-top: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-        .expand-comments:active { color: #FF6B35; }
+        .comment-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+        .comment-ai-tag { background: var(--accent-light); color: var(--accent); font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 500; }
+        .comment-endorsed { background: var(--warm-light); color: var(--warm); font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 500; }
+        .comment-text { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+        .comment-more { font-size: 12px; color: var(--primary); margin-top: 8px; text-align: center; cursor: pointer; }
         
-        /* 评论弹层 */
-        .comment-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
-        .comment-modal.show { display: flex; }
-        .comment-modal-content { width: 100%; max-width: 375px; background: #FFFFFF; border-radius: 16px 16px 0 0; max-height: 70vh; display: flex; flex-direction: column; }
-        .comment-modal-header { padding: 16px; border-bottom: 1px solid #F0F0F0; display: flex; align-items: center; justify-content: space-between; }
-        .comment-modal-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-        .comment-modal-close { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .comment-modal-list { flex: 1; overflow-y: auto; padding: 12px 16px; }
-        .comment-modal-input { padding: 12px 16px; border-top: 1px solid #F0F0F0; display: flex; align-items: center; gap: 10px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
-        .comment-modal-input input { flex: 1; height: 36px; background: #F5F5F5; border: none; border-radius: 18px; padding: 0 14px; font-size: 14px; outline: none; }
-        .comment-modal-input button { padding: 8px 16px; background: #FF6B35; color: white; border: none; border-radius: 18px; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 0.5px solid var(--border-light); }
+        .card-stats { display: flex; gap: 16px; }
+        .stat-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .stat-btn i { font-size: 16px; }
+        .stat-btn.liked { color: var(--error); }
+        .stat-btn.liked i { font-weight: 900; }
+        .card-action-btn { background: var(--primary-gradient); color: white; padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); }
+        .card-action-btn:active { transform: scale(0.96); }
         
-        /* 底部交互栏 */
-        .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid #F0F0F0; margin-top: 12px; }
-        .card-stats { display: flex; align-items: center; gap: 16px; }
-        .stat-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: #999; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: all 0.2s; }
-        .stat-item.liked { color: #FF4757; }
-        .stat-item i { font-size: 15px; }
-        .card-action-btn { padding: 7px 14px; background: #FF6B35; color: white; border-radius: 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .card-action-btn i { font-size: 13px; }
+        /* 评论弹窗 */
+        .comment-modal { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 70vh; background: var(--bg-card); border-radius: var(--radius-xl) var(--radius-xl) 0 0; z-index: 200; display: none; flex-direction: column; box-shadow: var(--shadow-xl); }
+        .comment-modal.show { display: flex; animation: slideUp 0.3s ease; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 0.5px solid var(--border-light); }
+        .modal-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .modal-close { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-muted); }
+        .modal-comments { flex: 1; overflow-y: auto; padding: 16px; }
+        .modal-comment-item { display: flex; gap: 12px; margin-bottom: 16px; }
+        .modal-comment-avatar { width: 36px; height: 36px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .modal-comment-avatar i { font-size: 14px; color: white; }
+        .modal-comment-content { flex: 1; }
+        .modal-comment-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .modal-comment-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .modal-comment-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+        .modal-comment-actions { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+        .modal-comment-action { font-size: 12px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .modal-comment-action.endorsed { color: var(--warm); }
+        .modal-input-area { padding: 12px 16px; border-top: 0.5px solid var(--border-light); background: var(--bg-card); }
+        .modal-input-box { display: flex; align-items: center; gap: 10px; background: var(--bg-muted); border-radius: var(--radius-full); padding: 10px 14px; }
+        .modal-input-box input { flex: 1; border: none; background: transparent; font-size: 14px; outline: none; color: var(--text-primary); }
+        .modal-input-box input::placeholder { color: var(--text-muted); }
+        .modal-send-btn { width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .modal-send-btn i { font-size: 12px; color: white; }
         
-        /* 空状态 */
-        .empty-state { text-align: center; padding: 60px 24px; background: #FFFFFF; margin: 12px 16px; border-radius: 16px; }
-        .empty-icon { width: 80px; height: 80px; background: #F5F5F5; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 16px; }
-        .empty-icon i { font-size: 32px; color: #CCC; }
-        .empty-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 8px; }
-        .empty-desc { font-size: 14px; color: #999; }
-        
-        /* 底部导航 */
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; height: 80px; background: #FFFFFF; border-top: 1px solid #F0F0F0; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 16px; }
-        .nav-item i { font-size: 22px; color: #999; }
-        .nav-item span { font-size: 11px; color: #999; }
-        .nav-item.active i, .nav-item.active span { color: #FF6B35; }
-        .publish-btn { width: 48px; height: 48px; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-top: -16px; }
-        .publish-btn i { font-size: 22px; color: white; }
-        
-        /* 动画 */
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .spinning { animation: spin 1s linear infinite; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .comment-modal-content { animation: slideUp 0.3s ease; }
+        /* 遮罩 */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 150; display: none; }
+        .modal-overlay.show { display: block; animation: fadeIn 0.3s ease; }
     </style>
 </head>
 <body>
     <div class="phone-frame" id="phoneFrame">
-        <div class="header">
-            <div class="header-top">
-                <div class="community-name">
-                    <span>万科金域蓝湾</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="header-actions">
-                    <div class="header-action" onclick="location.href='notifications.html'">
-                        <i class="fas fa-bell"></i>
-                        <div class="badge" id="unreadBadge">3</div>
-                    </div>
-                </div>
-            </div>
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="搜索需求或服务...">
-            </div>
-        </div>
-
-        <div class="agent-stats-card" id="agentStatsCard">
-            <div class="agent-stats-header">
-                <div class="agent-stats-title">🤖 过去1小时，你的分身替你</div>
-                <div class="agent-stats-time" onclick="refreshStats()">
-                    <i class="fas fa-sync-alt"></i>
-                    <span id="lastUpdate">刚刚</span>
-                </div>
-            </div>
-            <div class="agent-stats-data">
-                浏览 <span class="num" id="viewCount">47</span>
-                <span class="divider">·</span>
-                点赞 <span class="num" id="likeCount">5</span>
-                <span class="divider">·</span>
-                评论 <span class="num" id="commentCount">2</span>
-            </div>
-        </div>
-
+        <!-- 下拉刷新指示器 -->
         <div class="pull-indicator" id="pullIndicator">
             <i class="fas fa-sync-alt" id="refreshIcon"></i>
             <span id="pullText">下拉刷新</span>
         </div>
 
-        <div class="tab-switch">
-            <button class="tab-btn active" onclick="switchTab('provide')">我需要</button>
-            <button class="tab-btn" onclick="switchTab('need')">我提供</button>
+        <!-- AI分身统计卡片 -->
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">我的分身最近1小时</div>
+                <div class="stats-badge">活跃中</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">阅读需求</div>
+                </div>
+                <div class="stat-item highlight">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">主动匹配</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">发送消息</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">等待确认</div>
+                </div>
+            </div>
         </div>
 
-        <div class="categories" id="categories"></div>
+        <!-- 我需要 / 我提供 切换 -->
+        <div class="tab-switch">
+            <div class="tab-btn active" onclick="switchTab('need')">我提供</div>
+            <div class="tab-btn" onclick="switchTab('provide')">我需要</div>
+        </div>
 
-        <div class="listings" id="listings"></div>
+        <!-- 分类标签 -->
+        <div class="category-tabs" id="categoryTabs"></div>
 
+        <!-- 列表 -->
+        <div class="listings-container" id="listings"></div>
+
+        <!-- 评论弹窗 -->
+        <div class="modal-overlay" id="modalOverlay" onclick="closeCommentModal()"></div>
+        <div class="comment-modal" id="commentModal">
+            <div class="modal-header">
+                <div class="modal-title">评论 <span id="commentCount">0</span></div>
+                <div class="modal-close" onclick="closeCommentModal()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="modal-comments" id="modalComments"></div>
+            <div class="modal-input-area">
+                <div class="modal-input-box">
+                    <input type="text" id="modalInput" placeholder="写评论...">
+                    <div class="modal-send-btn" onclick="submitComment()">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
         <div class="bottom-nav">
             <div class="nav-item active">
                 <i class="fas fa-home"></i>
@@ -238,110 +223,98 @@
         </div>
     </div>
 
-    <!-- 评论弹层 -->
-    <div class="comment-modal" id="commentModal" onclick="closeCommentModal(event)">
-        <div class="comment-modal-content" onclick="event.stopPropagation()">
-            <div class="comment-modal-header">
-                <div class="comment-modal-title">全部评论 <span id="modalCommentCount"></span></div>
-                <div class="comment-modal-close" onclick="closeCommentModal()">
-                    <i class="fas fa-times" style="color: #999;"></i>
-                </div>
-            </div>
-            <div class="comment-modal-list" id="modalCommentList"></div>
-            <div class="comment-modal-input">
-                <input type="text" placeholder="写下你的评论..." id="commentInput">
-                <button onclick="submitComment()">发送</button>
-            </div>
-        </div>
-    </div>
-
     <script src="data/mock-data.js"></script>
     <script>
-        let currentTab = 'provide';
+        let currentTab = 'need';
         let currentCategory = 'all';
         let likedItems = new Set();
-        let commentLikedItems = new Set();
         let endorsedComments = new Set();
         let currentPostId = null;
-
-        const CATEGORIES = [
-            { key: 'all', label: '全部' },
-            { key: 'life', label: '🏠 生活服务' },
-            { key: 'skill', label: '🎓 技能交换' },
-            { key: 'item', label: '📦 物品流转' },
-            { key: 'activity', label: '🎾 活动组局' },
-            { key: 'help', label: '🆘 临时求助' },
-            { key: 'info', label: '💡 信息共享' }
-        ];
-
-        function getImageGridClass(count) {
-            if (count === 1) return 'single';
-            if (count === 2) return 'double';
-            if (count === 3) return 'triple';
-            if (count === 4) return 'quad';
-            if (count <= 6) return 'six';
-            return 'nine';
-        }
-
-        function renderImages(images, maxShow = 9) {
-            if (!images || images.length === 0) return '';
-            const showImages = images.slice(0, maxShow);
-            const hasMore = images.length > maxShow;
-            const gridClass = getImageGridClass(showImages.length);
-            let html = `<div class="image-grid ${gridClass}">`;
-            showImages.forEach((img, index) => {
-                if (hasMore && index === maxShow - 1) {
-                    html += `<div class="more-overlay">
-                        <img src="${img}" alt="图片" loading="lazy">
-                        <div class="more-num">+${images.length - maxShow + 1}</div>
-                    </div>`;
+        
+        // 下拉刷新
+        let startY = 0, isPulling = false;
+        document.getElementById('phoneFrame').addEventListener('touchstart', (e) => {
+            if (window.scrollY === 0) {
+                startY = e.touches[0].clientY;
+                isPulling = true;
+            }
+        });
+        document.getElementById('phoneFrame').addEventListener('touchmove', (e) => {
+            if (!isPulling) return;
+            const currentY = e.touches[0].clientY;
+            const diff = currentY - startY;
+            if (diff > 0 && diff < 80) {
+                document.getElementById('pullIndicator').style.transform = `translateY(${diff}px)`;
+                if (diff > 50) {
+                    document.getElementById('pullIndicator').classList.add('show');
+                    document.getElementById('pullText').textContent = '释放刷新';
                 } else {
-                    html += `<img src="${img}" alt="图片" loading="lazy">`;
+                    document.getElementById('pullText').textContent = '下拉刷新';
                 }
+            }
+        });
+        document.getElementById('phoneFrame').addEventListener('touchend', () => {
+            if (!isPulling) return;
+            isPulling = false;
+            const indicator = document.getElementById('pullIndicator');
+            if (indicator.classList.contains('show')) {
+                document.getElementById('refreshIcon').classList.add('spinning');
+                document.getElementById('pullText').textContent = '刷新中...';
+                setTimeout(() => {
+                    refreshStats();
+                    document.getElementById('refreshIcon').classList.remove('spinning');
+                    indicator.classList.remove('show');
+                }, 1000);
+            }
+            indicator.style.transform = '';
+        });
+
+        function refreshStats() {
+            const values = document.querySelectorAll('.stat-value');
+            values.forEach(v => {
+                const current = parseInt(v.textContent);
+                v.textContent = current + Math.floor(Math.random() * 3);
             });
-            html += '</div>';
-            return html;
         }
 
-        function renderCommentPreview(comments, postId) {
-            if (!comments || comments.length === 0) return '';
-            const preview = comments[0];
-            const isLiked = commentLikedItems.has(preview.id);
-            const isEndorsed = endorsedComments.has(preview.id) || preview.endorsed;
-            
-            return `
-            <div class="comment-section" onclick="event.stopPropagation(); openCommentModal(${postId})">
-                <div class="comment-item">
-                    <div class="comment-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="comment-body">
-                        <div class="comment-header">
-                            <span class="comment-name">${preview.userName}</span>
-                            <span class="comment-ai-tag">AI</span>
-                            ${isEndorsed ? '<span class="comment-endorse-tag">已认可</span>' : ''}
-                        </div>
-                        <div class="comment-text">${preview.content}</div>
-                        <div class="comment-actions">
-                            <span class="comment-action ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleCommentLike('${preview.id}', this)">
-                                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${preview.likes + (isLiked ? 1 : 0)}
-                            </span>
-                            <span class="comment-action" onclick="event.stopPropagation(); ${isEndorsed ? '' : `endorseComment('${preview.id}', this)`}">
-                                ${isEndorsed ? '<i class="fas fa-check"></i> 已认可' : '<i class="far fa-check-circle"></i> 认可'}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                ${comments.length > 1 ? `<div class="expand-comments"><i class="fas fa-chevron-down"></i> 展开${comments.length - 1}条更多评论</div>` : ''}
-            </div>`;
+        function switchTab(tab) {
+            currentTab = tab;
+            currentCategory = 'all';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderCategories();
+            renderListings();
         }
 
         function renderCategories() {
-            const container = document.getElementById('categories');
-            container.innerHTML = CATEGORIES.map(cat => `
-                <div class="category-chip ${cat.key === currentCategory ? 'active' : ''}" 
-                     onclick="selectCategory('${cat.key}')">
-                    ${cat.label}
-                </div>
-            `).join('');
+            const categories = [
+                { key: 'all', label: '全部' },
+                { key: 'life', label: '生活服务' },
+                { key: 'skill', label: '技能互助' },
+                { key: 'item', label: '物品借用' },
+                { key: 'activity', label: '活动组局' },
+                { key: 'help', label: '临时帮忙' },
+                { key: 'info', label: '信息咨询' }
+            ];
+            
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = categories.map(cat => {
+                const count = cat.key === 'all' 
+                    ? MOCK_DATA[currentTab].all.length 
+                    : (MOCK_DATA[currentTab][cat.key] || []).length;
+                return `
+                    <div class="category-tab ${cat.key === currentCategory ? 'active' : ''}" 
+                         onclick="selectCategory('${cat.key}')">
+                        ${cat.label}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectCategory(category) {
+            currentCategory = category;
+            renderCategories();
+            renderListings();
         }
 
         function renderListings() {
@@ -396,15 +369,15 @@
                     
                     <div class="card-footer">
                         <div class="card-stats">
-                            <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
+                            <div class="stat-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
                                 <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
                                 <span>${item.likes + (isLiked ? 1 : 0)}</span>
                             </div>
-                            <div class="stat-item" onclick="openCommentModal(${item.id})">
+                            <div class="stat-btn" onclick="openCommentModal(${item.id})">
                                 <i class="far fa-comment"></i>
                                 <span>${comments.length}</span>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-btn">
                                 <i class="far fa-share-square"></i>
                             </div>
                         </div>
@@ -417,89 +390,120 @@
             }).join('');
         }
 
+        function renderImages(images) {
+            if (!images || images.length === 0) return '';
+            
+            let gridClass = 'single';
+            if (images.length === 2) gridClass = 'double';
+            else if (images.length === 3) gridClass = 'triple';
+            else if (images.length === 4) gridClass = 'quad';
+            else if (images.length > 4) gridClass = 'many';
+            
+            const displayImages = images.slice(0, 9);
+            
+            return `
+                <div class="image-grid ${gridClass}">
+                    ${displayImages.map((img, i) => `<img src="${img}" alt="图片${i+1}">`).join('')}
+                </div>
+            `;
+        }
+
+        function renderCommentPreview(comments, postId) {
+            if (!comments || comments.length === 0) return '';
+            
+            const displayComments = comments.slice(0, 2);
+            const hasMore = comments.length > 2;
+            
+            return `
+                <div class="comment-preview" onclick="openCommentModal(${postId})">
+                    ${displayComments.map(c => `
+                        <div class="comment-item">
+                            <div class="comment-avatar"><i class="fas fa-robot"></i></div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-name">${c.userName}</span>
+                                    <span class="comment-ai-tag">AI</span>
+                                    ${c.endorsed ? '<span class="comment-endorsed">已认可</span>' : ''}
+                                </div>
+                                <div class="comment-text">${c.content}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${hasMore ? `<div class="comment-more">查看全部 ${comments.length} 条评论</div>` : ''}
+                </div>
+            `;
+        }
+
         function toggleLike(id, el) {
             event.stopPropagation();
             if (likedItems.has(id)) {
                 likedItems.delete(id);
                 el.classList.remove('liked');
-                el.querySelector('i').className = 'far fa-heart';
             } else {
                 likedItems.add(id);
                 el.classList.add('liked');
-                el.querySelector('i').className = 'fas fa-heart';
             }
-            const span = el.querySelector('span');
-            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === id);
-            span.textContent = data.likes + (likedItems.has(id) ? 1 : 0);
-        }
-
-        function toggleCommentLike(commentId, el) {
-            event.stopPropagation();
-            if (commentLikedItems.has(commentId)) {
-                commentLikedItems.delete(commentId);
-            } else {
-                commentLikedItems.add(commentId);
-            }
-            renderListings();
-        }
-
-        function endorseComment(commentId, el) {
-            event.stopPropagation();
-            endorsedComments.add(commentId);
             renderListings();
         }
 
         function openCommentModal(postId) {
             event.stopPropagation();
             currentPostId = postId;
-            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === postId);
-            const comments = data.comments || [];
+            const item = [...MOCK_DATA.need.all, ...MOCK_DATA.provide.all].find(i => i.id === postId);
+            if (!item) return;
             
-            document.getElementById('modalCommentCount').textContent = `(${comments.length})`;
+            const comments = item.comments || [];
+            document.getElementById('commentCount').textContent = comments.length;
             
-            const listHtml = comments.map(c => {
-                const isLiked = commentLikedItems.has(c.id);
-                const isEndorsed = endorsedComments.has(c.id) || c.endorsed;
-                return `
-                <div class="comment-item">
-                    <div class="comment-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="comment-body">
-                        <div class="comment-header">
-                            <span class="comment-name">${c.userName}</span>
+            document.getElementById('modalComments').innerHTML = comments.map(c => `
+                <div class="modal-comment-item">
+                    <div class="modal-comment-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="modal-comment-content">
+                        <div class="modal-comment-header">
+                            <span class="modal-comment-name">${c.userName}</span>
                             <span class="comment-ai-tag">AI</span>
-                            ${isEndorsed ? '<span class="comment-endorse-tag">已认可</span>' : ''}
                         </div>
-                        <div class="comment-text">${c.content}</div>
-                        <div class="comment-actions">
-                            <span class="comment-action ${isLiked ? 'liked' : ''}" onclick="toggleCommentLike('${c.id}')">
-                                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${c.likes + (isLiked ? 1 : 0)}
-                            </span>
-                            <span class="comment-action" onclick="${isEndorsed ? '' : `endorseComment('${c.id}')`}">
-                                ${isEndorsed ? '<i class="fas fa-check"></i> 已认可' : '<i class="far fa-check-circle"></i> 认可'}
-                            </span>
+                        <div class="modal-comment-text">${c.content}</div>
+                        <div class="modal-comment-actions">
+                            <div class="modal-comment-action ${endorsedComments.has(c.id) ? 'endorsed' : ''}" onclick="endorseComment('${c.id}', this)">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>${endorsedComments.has(c.id) ? '已认可' : '认可'}</span> ${c.likes + (endorsedComments.has(c.id) ? 1 : 0)}
+                            </div>
                         </div>
                     </div>
-                </div>`;
-            }).join('');
+                </div>
+            `).join('');
             
-            document.getElementById('modalCommentList').innerHTML = listHtml;
+            document.getElementById('modalOverlay').classList.add('show');
             document.getElementById('commentModal').classList.add('show');
         }
 
-        function closeCommentModal(e) {
-            if (!e || e.target === e.currentTarget) {
-                document.getElementById('commentModal').classList.remove('show');
+        function closeCommentModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.getElementById('commentModal').classList.remove('show');
+            currentPostId = null;
+        }
+
+        function endorseComment(commentId, el) {
+            event.stopPropagation();
+            if (endorsedComments.has(commentId)) {
+                endorsedComments.delete(commentId);
+            } else {
+                endorsedComments.add(commentId);
             }
+            openCommentModal(currentPostId);
+            renderListings();
         }
 
         function submitComment() {
-            const input = document.getElementById('commentInput');
+            const input = document.getElementById('modalInput');
             const text = input.value.trim();
             if (!text) return;
             
-            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === currentPostId);
-            if (data && data.comments) {
-                data.comments.push({
+            const item = [...MOCK_DATA.need.all, ...MOCK_DATA.provide.all].find(i => i.id === currentPostId);
+            if (item) {
+                item.comments = item.comments || [];
+                item.comments.push({
                     id: 'c' + Date.now(),
                     userName: '我的分身',
                     content: text,
@@ -507,68 +511,11 @@
                     endorsed: false
                 });
             }
+            
             input.value = '';
-            closeCommentModal();
+            openCommentModal(currentPostId);
             renderListings();
         }
-
-        function switchTab(tab) {
-            currentTab = tab;
-            currentCategory = 'all';
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            renderCategories();
-            renderListings();
-        }
-
-        function selectCategory(category) {
-            currentCategory = category;
-            renderCategories();
-            renderListings();
-        }
-
-        function refreshStats() {
-            document.getElementById('viewCount').textContent = Math.floor(Math.random() * 100) + 30;
-            document.getElementById('likeCount').textContent = Math.floor(Math.random() * 10);
-            document.getElementById('commentCount').textContent = Math.floor(Math.random() * 5);
-            document.getElementById('lastUpdate').textContent = '刚刚';
-        }
-
-        // 下拉刷新
-        let startY = 0, isPulling = false;
-        const pullThreshold = 80;
-
-        document.getElementById('phoneFrame').addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) {
-                startY = e.touches[0].clientY;
-                isPulling = true;
-            }
-        });
-
-        document.getElementById('phoneFrame').addEventListener('touchmove', (e) => {
-            if (!isPulling) return;
-            const diff = e.touches[0].clientY - startY;
-            if (diff > 0 && window.scrollY === 0) {
-                const indicator = document.getElementById('pullIndicator');
-                indicator.classList.add('show');
-                document.getElementById('pullText').textContent = diff > pullThreshold ? '释放刷新' : '下拉刷新';
-            }
-        });
-
-        document.getElementById('phoneFrame').addEventListener('touchend', () => {
-            if (!isPulling) return;
-            isPulling = false;
-            const indicator = document.getElementById('pullIndicator');
-            if (indicator.classList.contains('show')) {
-                document.getElementById('refreshIcon').classList.add('spinning');
-                document.getElementById('pullText').textContent = '刷新中...';
-                setTimeout(() => {
-                    refreshStats();
-                    document.getElementById('refreshIcon').classList.remove('spinning');
-                    indicator.classList.remove('show');
-                }, 1000);
-            }
-        });
 
         renderCategories();
         renderListings();

@@ -4,215 +4,197 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>创建分身 - 邻里分身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; background: #FFFBF5; }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: #FFFFFF; position: relative; overflow: hidden; }
-        .header { height: 56px; display: flex; align-items: center; padding: 0 16px; background: #FFFFFF; border-bottom: 1px solid #F5F0EB; }
-        .back-btn { width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 50%; }
-        .back-btn:active { background: #F5F0EB; }
-        .header-title { flex: 1; text-align: center; font-size: 17px; font-weight: 600; color: #3D2914; margin-right: 40px; }
+        body { background: var(--bg-base); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); }
         
-        .progress-container { padding: 24px 24px 16px; }
-        .progress-steps { display: flex; justify-content: space-between; position: relative; }
-        .progress-steps::before { content: ''; position: absolute; top: 16px; left: 24px; right: 24px; height: 2px; background: #E7E0DA; z-index: 0; }
-        .progress-line { position: absolute; top: 16px; left: 24px; height: 2px; background: #F97316; z-index: 1; transition: width 0.3s ease; }
-        .step-dot { width: 32px; height: 32px; border-radius: 50%; background: #E7E0DA; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: white; z-index: 2; transition: all 0.3s ease; }
-        .step-dot.active { background: #F97316; }
-        .step-dot.completed { background: #22C55E; }
+        /* 进度指示 */
+        .progress-bar { display: flex; justify-content: center; gap: 8px; padding: 24px 0 16px; }
+        .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-default); transition: all 0.3s; }
+        .progress-dot.active { background: var(--primary); width: 24px; border-radius: 4px; }
+        .progress-dot.done { background: var(--accent); }
         
-        .step-content { padding: 24px; display: none; }
-        .step-content.active { display: block; }
-        .step-title { font-size: 24px; font-weight: 700; color: #3D2914; margin-bottom: 8px; }
-        .step-subtitle { font-size: 15px; color: #78716C; margin-bottom: 32px; line-height: 1.5; }
+        /* 内容区 */
+        .content { padding: 0 24px; flex: 1; }
+        .step-title { font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+        .step-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; line-height: 1.5; }
         
-        .input-group { margin-bottom: 20px; }
-        .input-label { display: block; font-size: 14px; font-weight: 600; color: #3D2914; margin-bottom: 8px; }
-        .input-field { width: 100%; height: 52px; border: 2px solid #E7E0DA; border-radius: 12px; padding: 0 16px; font-size: 16px; outline: none; background: #FFFFFF; color: #3D2914; }
-        .input-field:focus { border-color: #F97316; }
-        .input-field::placeholder { color: #A8A29E; }
+        /* 步骤1：命名 */
+        .name-input { width: 100%; padding: 18px 20px; font-size: 18px; color: var(--text-primary); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-xl); outline: none; transition: all 0.2s; text-align: center; }
+        .name-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-bg); }
+        .name-input::placeholder { color: var(--text-muted); }
         
-        .code-input-group { display: flex; gap: 12px; }
-        .code-input-group .input-field { flex: 1; }
-        .code-btn { width: 120px; height: 52px; background: #F97316; border: none; border-radius: 12px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .code-btn:disabled { opacity: 0.5; }
-        .code-btn:active { background: #EA580C; }
+        /* 步骤2：头像 */
+        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .avatar-option { aspect-ratio: 1; background: var(--bg-muted); border-radius: var(--radius-xl); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; border: 3px solid transparent; }
+        .avatar-option.selected { border-color: var(--primary); background: var(--primary-bg); }
+        .avatar-option i { font-size: 36px; color: var(--text-muted); }
+        .avatar-option.selected i { color: var(--primary); }
         
-        .community-card { padding: 16px; border: 2px solid #E7E0DA; border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
-        .community-card:active { background: #FFFBF5; }
-        .community-card.selected { border-color: #F97316; background: #FFFBF5; }
-        .community-icon { width: 48px; height: 48px; background: #FFEDD5; border-radius: 12px; display: flex; justify-content: center; align-items: center; }
-        .community-icon i { font-size: 24px; color: #F97316; }
-        .community-info h3 { font-size: 16px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
-        .community-info p { font-size: 14px; color: #78716C; }
-        .community-check { margin-left: auto; width: 24px; height: 24px; border-radius: 50%; border: 2px solid #E7E0DA; display: flex; justify-content: center; align-items: center; }
-        .community-card.selected .community-check { border-color: #F97316; background: #F97316; }
-        .community-check i { font-size: 12px; color: white; display: none; }
-        .community-card.selected .community-check i { display: block; }
+        /* 步骤3：风格 */
+        .style-options { display: flex; flex-direction: column; gap: 12px; }
+        .style-option { padding: 18px 20px; background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-xl); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 14px; }
+        .style-option.selected { border-color: var(--primary); background: var(--primary-bg); }
+        .style-icon { width: 44px; height: 44px; background: var(--bg-muted); border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; }
+        .style-option.selected .style-icon { background: var(--primary-gradient); }
+        .style-icon i { font-size: 20px; color: var(--text-muted); }
+        .style-option.selected .style-icon i { color: white; }
+        .style-text h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .style-text p { font-size: 13px; color: var(--text-muted); }
         
-        .avatar-selection { display: flex; flex-direction: column; align-items: center; margin-bottom: 32px; }
-        .avatar-preview { width: 100px; height: 100px; border-radius: 50%; background: #FFEDD5; display: flex; justify-content: center; align-items: center; margin-bottom: 16px; position: relative; }
-        .avatar-preview i { font-size: 48px; color: #F97316; }
-        .avatar-edit { position: absolute; bottom: 0; right: 0; width: 32px; height: 32px; background: #FFFFFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .avatar-edit i { font-size: 14px; color: #F97316; }
+        /* 步骤4：完成 */
+        .success-icon { width: 100px; height: 100px; background: var(--accent-light); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 24px; }
+        .success-icon i { font-size: 48px; color: var(--accent); }
+        .success-title { font-size: 24px; font-weight: 700; color: var(--text-primary); text-align: center; margin-bottom: 8px; }
+        .success-desc { font-size: 15px; color: var(--text-secondary); text-align: center; line-height: 1.6; }
         
-        .role-cards { display: flex; gap: 12px; margin-bottom: 24px; }
-        .role-card { flex: 1; padding: 20px 16px; border: 2px solid #E7E0DA; border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .role-card:active { background: #FFFBF5; }
-        .role-card.selected { border-color: #F97316; background: #FFFBF5; }
-        .role-card i { font-size: 32px; color: #F97316; margin-bottom: 8px; }
-        .role-card h3 { font-size: 16px; font-weight: 600; color: #3D2914; }
+        .avatar-preview { width: 80px; height: 80px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 24px auto; box-shadow: var(--shadow-md); }
+        .avatar-preview i { font-size: 36px; color: white; }
         
-        .tone-options { display: flex; gap: 12px; }
-        .tone-option { flex: 1; padding: 16px; border: 2px solid #E7E0DA; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .tone-option.selected { border-color: #F97316; background: #FFFBF5; }
-        .tone-option span { font-size: 24px; display: block; margin-bottom: 8px; }
-        .tone-option h4 { font-size: 14px; font-weight: 600; color: #3D2914; }
+        /* 底部按钮 */
+        .bottom-area { padding: 20px 24px; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+        .next-btn { width: 100%; height: 56px; background: var(--primary-gradient); border: none; border-radius: var(--radius-xl); color: white; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: var(--shadow-md); transition: all 0.2s; }
+        .next-btn:active { transform: scale(0.98); }
+        .next-btn:disabled { background: var(--bg-muted); color: var(--text-muted); box-shadow: none; }
         
-        .success-screen { text-align: center; padding: 60px 24px; }
-        .success-icon { width: 100px; height: 100px; background: #22C55E; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 24px; animation: success-bounce 0.6s ease; }
-        @keyframes success-bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        .success-icon i { font-size: 48px; color: white; }
-        .success-title { font-size: 24px; font-weight: 700; color: #3D2914; margin-bottom: 12px; }
-        .success-subtitle { font-size: 15px; color: #78716C; margin-bottom: 40px; line-height: 1.6; }
-        .agent-preview { background: #FFFBF5; border-radius: 16px; padding: 24px; margin-bottom: 32px; }
-        .agent-avatar { width: 80px; height: 80px; border-radius: 50%; background: #FFEDD5; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; }
-        .agent-avatar i { font-size: 36px; color: #F97316; }
-        .agent-name { font-size: 18px; font-weight: 600; color: #3D2914; margin-bottom: 4px; }
-        .agent-role { font-size: 14px; color: #78716C; }
-        
-        .btn-primary { width: 100%; height: 56px; background: #F97316; border: none; border-radius: 16px; color: white; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s; margin-top: 24px; }
-        .btn-primary:active { transform: scale(0.98); background: #EA580C; }
-        .btn-skip { width: 100%; height: 48px; background: transparent; border: none; color: #78716C; font-size: 15px; cursor: pointer; margin-top: 12px; }
+        .skip-btn { width: 100%; height: 48px; background: transparent; border: none; color: var(--text-muted); font-size: 15px; cursor: pointer; margin-top: 12px; }
     </style>
 </head>
 <body>
-    <div class="phone-frame">
-        <div class="header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left" style="color: #78716C;"></i></div>
-            <div class="header-title">创建分身</div>
+    <div class="phone-frame" style="display: flex; flex-direction: column; min-height: 100vh;">
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-steps">
-                <div class="progress-line" id="progressLine" style="width: 0%;"></div>
-                <div class="step-dot active" id="step1Dot"><span>1</span><i class="fas fa-check" style="display: none;"></i></div>
-                <div class="step-dot" id="step2Dot" style="margin-left: auto;"><span>2</span><i class="fas fa-check" style="display: none;"></i></div>
-                <div class="step-dot" id="step3Dot" style="margin-left: auto;"><span>3</span><i class="fas fa-check" style="display: none;"></i></div>
-                <div class="step-dot" id="step4Dot" style="margin-left: auto;"><span>4</span><i class="fas fa-check" style="display: none;"></i></div>
-            </div>
+        <div class="content" id="stepContent">
+            <!-- 步骤内容由JS渲染 -->
         </div>
 
-        <!-- Step 1 -->
-        <div class="step-content active" id="step1">
-            <h2 class="step-title">验证手机号</h2>
-            <p class="step-subtitle">我们会发送验证码到你的手机</p>
-            <div class="input-group">
-                <label class="input-label">手机号</label>
-                <input type="tel" class="input-field" placeholder="请输入手机号" maxlength="11">
-            </div>
-            <div class="input-group">
-                <label class="input-label">验证码</label>
-                <div class="code-input-group">
-                    <input type="text" class="input-field" placeholder="请输入验证码" maxlength="6">
-                    <button class="code-btn" onclick="sendCode()">获取验证码</button>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="goToStep2()">下一步</button>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="step-content" id="step2">
-            <h2 class="step-title">选择你的小区</h2>
-            <p class="step-subtitle">我们根据你的位置找到了附近的小区</p>
-            <div class="input-group">
-                <label class="input-label">搜索小区</label>
-                <input type="text" class="input-field" placeholder="输入小区名称搜索">
-            </div>
-            <div class="community-card selected" onclick="selectCommunity(this)">
-                <div class="community-icon"><i class="fas fa-building"></i></div>
-                <div class="community-info"><h3>万科金域蓝湾</h3><p>距你约 500m · 约 2000 户</p></div>
-                <div class="community-check"><i class="fas fa-check"></i></div>
-            </div>
-            <div class="community-card" onclick="selectCommunity(this)">
-                <div class="community-icon"><i class="fas fa-building"></i></div>
-                <div class="community-info"><h3>保利心语花园</h3><p>距你约 1.2km · 约 1500 户</p></div>
-                <div class="community-check"><i class="fas fa-check"></i></div>
-            </div>
-            <button class="btn-primary" onclick="goToStep3()">下一步</button>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="step-content" id="step3">
-            <h2 class="step-title">设置你的分身</h2>
-            <p class="step-subtitle">分身会帮你匹配小区资源</p>
-            <div class="avatar-selection">
-                <div class="avatar-preview"><i class="fas fa-robot"></i></div>
-                <input type="text" class="input-field" style="text-align: center; width: 200px;" value="我的分身" placeholder="给分身起个名字">
-            </div>
-            <div class="input-group">
-                <label class="input-label">你的身份</label>
-                <div class="role-cards">
-                    <div class="role-card selected" onclick="selectRole(this)"><i class="fas fa-home"></i><h3>业主</h3></div>
-                    <div class="role-card" onclick="selectRole(this)"><i class="fas fa-key"></i><h3>租户</h3></div>
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="input-label">分身沟通风格</label>
-                <div class="tone-options">
-                    <div class="tone-option selected" onclick="selectTone(this)"><span>😊</span><h4>热情</h4></div>
-                    <div class="tone-option" onclick="selectTone(this)"><span>👌</span><h4>简洁</h4></div>
-                    <div class="tone-option" onclick="selectTone(this)"><span>🙏</span><h4>礼貌</h4></div>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="goToStep4()">创建分身</button>
-        </div>
-
-        <!-- Step 4 -->
-        <div class="step-content" id="step4">
-            <div class="success-screen">
-                <div class="success-icon"><i class="fas fa-check"></i></div>
-                <h2 class="success-title">分身创建成功！</h2>
-                <p class="success-subtitle">你的 AI 分身已经准备好了</p>
-                <div class="agent-preview">
-                    <div class="agent-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="agent-name">我的分身 🤖</div>
-                    <div class="agent-role">万科金域蓝湾 · 业主 · 热情</div>
-                </div>
-                <button class="btn-primary" onclick="location.href='publish.html'"><i class="fas fa-plus"></i> 发布第一条"我提供"</button>
-                <button class="btn-skip" onclick="location.href='hall.html'">先去大厅逛逛</button>
-            </div>
+        <div class="bottom-area">
+            <button class="next-btn" id="nextBtn" onclick="nextStep()">
+                下一步
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="skip-btn" id="skipBtn" onclick="skipStep()" style="display: none;">跳过</button>
         </div>
     </div>
 
     <script>
         let currentStep = 1;
-        function updateProgress(step) {
-            const progressLine = document.getElementById('progressLine');
-            const widths = ['0%', '33%', '66%', '100%'];
-            progressLine.style.width = widths[step - 1];
+        let avatarName = '';
+        let selectedAvatar = 0;
+        let selectedStyle = 0;
+
+        const avatars = ['fa-user', 'fa-user-tie', 'fa-user-ninja', 'fa-user-astronaut', 'fa-user-secret', 'fa-robot'];
+        const styles = [
+            { icon: 'fa-comments', name: '热情健谈', desc: '主动交流，善于破冰' },
+            { icon: 'fa-briefcase', name: '简洁高效', desc: '直奔主题，不说废话' },
+            { icon: 'fa-heart', name: '温柔体贴', desc: '关心细节，善解人意' }
+        ];
+
+        renderStep();
+
+        function renderStep() {
+            const progressBar = document.getElementById('progressBar');
+            const content = document.getElementById('stepContent');
+            const nextBtn = document.getElementById('nextBtn');
+            const skipBtn = document.getElementById('skipBtn');
+
+            // 更新进度条
+            progressBar.innerHTML = '';
             for (let i = 1; i <= 4; i++) {
-                const dot = document.getElementById('step' + i + 'Dot');
-                const number = dot.querySelector('span');
-                const check = dot.querySelector('i');
-                if (i < step) { dot.classList.add('completed'); dot.classList.remove('active'); number.style.display = 'none'; check.style.display = 'block'; }
-                else if (i === step) { dot.classList.add('active'); dot.classList.remove('completed'); number.style.display = 'block'; check.style.display = 'none'; }
-                else { dot.classList.remove('active', 'completed'); number.style.display = 'block'; check.style.display = 'none'; }
+                let cls = 'progress-dot';
+                if (i < currentStep) cls += ' done';
+                else if (i === currentStep) cls += ' active';
+                progressBar.innerHTML += `<div class="${cls}"></div>`;
             }
-            for (let i = 1; i <= 4; i++) document.getElementById('step' + i).classList.remove('active');
-            document.getElementById('step' + step).classList.add('active');
+
+            // 渲染内容
+            if (currentStep === 1) {
+                content.innerHTML = `
+                    <div class="step-title">给分身起个名字</div>
+                    <div class="step-desc">这是你分身的昵称，邻居会通过这个名字认识TA</div>
+                    <input type="text" class="name-input" id="nameInput" placeholder="输入名字..." maxlength="10" value="${avatarName}" oninput="avatarName = this.value">
+                `;
+                nextBtn.innerHTML = '下一步 <i class="fas fa-arrow-right"></i>';
+                skipBtn.style.display = 'none';
+            } else if (currentStep === 2) {
+                content.innerHTML = `
+                    <div class="step-title">选择分身形象</div>
+                    <div class="step-desc">选择一个你喜欢的头像风格</div>
+                    <div class="avatar-grid">
+                        ${avatars.map((a, i) => `
+                            <div class="avatar-option ${selectedAvatar === i ? 'selected' : ''}" onclick="selectAvatar(${i})">
+                                <i class="fas ${a}"></i>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                skipBtn.style.display = 'block';
+            } else if (currentStep === 3) {
+                content.innerHTML = `
+                    <div class="step-title">选择沟通风格</div>
+                    <div class="step-desc">分身会按照你选择的风格与邻居交流</div>
+                    <div class="style-options">
+                        ${styles.map((s, i) => `
+                            <div class="style-option ${selectedStyle === i ? 'selected' : ''}" onclick="selectStyle(${i})">
+                                <div class="style-icon"><i class="fas ${s.icon}"></i></div>
+                                <div class="style-text">
+                                    <h4>${s.name}</h4>
+                                    <p>${s.desc}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                skipBtn.style.display = 'block';
+            } else if (currentStep === 4) {
+                content.innerHTML = `
+                    <div class="success-icon"><i class="fas fa-check"></i></div>
+                    <div class="success-title">分身创建成功！</div>
+                    <div class="success-desc">你的分身"${avatarName || '小助手'}"已经准备好了<br>现在就去发布第一条需求吧</div>
+                    <div class="avatar-preview"><i class="fas ${avatars[selectedAvatar]}"></i></div>
+                `;
+                nextBtn.innerHTML = '开始使用 <i class="fas fa-arrow-right"></i>';
+                skipBtn.style.display = 'none';
+            }
         }
-        function goToStep2() { currentStep = 2; updateProgress(2); }
-        function goToStep3() { currentStep = 3; updateProgress(3); }
-        function goToStep4() { currentStep = 4; updateProgress(4); }
-        function goBack() { if (currentStep > 1) { currentStep--; updateProgress(currentStep); } else { location.href = 'index.html'; } }
-        function sendCode() { let btn = event.target; let countdown = 60; btn.disabled = true; btn.textContent = countdown + 's'; const timer = setInterval(() => { countdown--; btn.textContent = countdown + 's'; if (countdown <= 0) { clearInterval(timer); btn.disabled = false; btn.textContent = '获取验证码'; } }, 1000); }
-        function selectCommunity(card) { document.querySelectorAll('.community-card').forEach(c => c.classList.remove('selected')); card.classList.add('selected'); }
-        function selectRole(card) { document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected')); card.classList.add('selected'); }
-        function selectTone(option) { document.querySelectorAll('.tone-option').forEach(o => o.classList.remove('selected')); option.classList.add('selected'); }
+
+        function selectAvatar(i) {
+            selectedAvatar = i;
+            renderStep();
+        }
+
+        function selectStyle(i) {
+            selectedStyle = i;
+            renderStep();
+        }
+
+        function nextStep() {
+            if (currentStep === 1 && !avatarName.trim()) {
+                avatarName = '小助手';
+            }
+            
+            if (currentStep < 4) {
+                currentStep++;
+                renderStep();
+            } else {
+                location.href = 'hall.html';
+            }
+        }
+
+        function skipStep() {
+            currentStep++;
+            renderStep();
+        }
     </script>
 </body>
 </html>
