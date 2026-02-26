@@ -10,66 +10,120 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        body { background: var(--bg-base); }
-        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); }
+        body { background: var(--bg-muted); }
+        .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-muted); display: flex; flex-direction: column; }
         
         /* 顶部导航 */
-        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--bg-card); position: sticky; top: 0; z-index: 100; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--bg-card); border-bottom: 0.5px solid var(--border-light); }
         .nav-close { width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-muted); }
-        .nav-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
-        .nav-publish { font-size: 15px; font-weight: 600; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--primary-bg); border-radius: var(--radius-full); }
+        .nav-title { display: flex; align-items: center; gap: 8px; }
+        .nav-title .avatar { width: 28px; height: 28px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .nav-title .avatar i { font-size: 12px; color: white; }
+        .nav-title span { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .nav-action { font-size: 14px; color: var(--text-muted); cursor: pointer; }
         
-        /* Tab切换 */
-        .tab-switch { display: flex; background: var(--bg-muted); margin: 16px; border-radius: var(--radius-lg); padding: 4px; }
-        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 15px; font-weight: 600; color: var(--text-secondary); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; }
-        .tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+        /* 消息区域 */
+        .messages-container { flex: 1; overflow-y: auto; padding: 16px; }
         
-        /* 表单区域 */
-        .form-section { padding: 0 16px 16px; }
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
-        .form-input { width: 100%; padding: 14px 16px; font-size: 15px; color: var(--text-primary); background: var(--bg-card); border: 1.5px solid var(--border-light); border-radius: var(--radius-lg); outline: none; transition: all 0.2s ease; }
-        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
-        .form-input::placeholder { color: var(--text-muted); }
-        .form-textarea { min-height: 120px; resize: none; line-height: 1.6; }
+        .message-item { display: flex; margin-bottom: 16px; animation: fadeIn 0.3s ease; }
+        .message-item.sent { flex-direction: row-reverse; }
         
-        /* 图片上传 */
-        .image-upload { display: flex; gap: 10px; flex-wrap: wrap; }
-        .image-item { width: 80px; height: 80px; border-radius: var(--radius-md); overflow: hidden; position: relative; }
-        .image-item img { width: 100%; height: 100%; object-fit: cover; }
-        .image-item .remove { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .image-item .remove i { font-size: 10px; color: white; }
-        .image-add { width: 80px; height: 80px; background: var(--bg-muted); border: 2px dashed var(--border-default); border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; }
-        .image-add:active { background: var(--border-light); }
-        .image-add i { font-size: 24px; color: var(--text-muted); margin-bottom: 4px; }
-        .image-add span { font-size: 11px; color: var(--text-muted); }
+        .message-avatar { width: 36px; height: 36px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .message-avatar i { font-size: 14px; color: white; }
+        .message-item.sent .message-avatar { background: var(--bg-card); border: 1.5px solid var(--border-light); }
+        .message-item.sent .message-avatar i { color: var(--text-muted); }
         
-        /* 分类选择 */
-        .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .category-item { padding: 12px 8px; text-align: center; background: var(--bg-card); border: 1.5px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; }
-        .category-item.active { border-color: var(--primary); background: var(--primary-bg); }
-        .category-item i { font-size: 20px; color: var(--text-muted); margin-bottom: 6px; display: block; }
-        .category-item.active i { color: var(--primary); }
-        .category-item span { font-size: 12px; color: var(--text-secondary); }
-        .category-item.active span { color: var(--primary); }
+        .message-content { max-width: 80%; margin: 0 10px; }
+        .message-bubble { padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.6; }
+        .message-item.received .message-bubble { background: var(--bg-card); color: var(--text-primary); border-bottom-left-radius: 6px; box-shadow: var(--shadow-xs); }
+        .message-item.sent .message-bubble { background: var(--primary-gradient); color: white; border-bottom-right-radius: 6px; }
+        .message-time { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        .message-item.sent .message-time { text-align: right; }
         
-        /* 价格输入 */
-        .price-row { display: flex; gap: 12px; }
-        .price-input { flex: 1; }
-        .unit-select { width: 100px; }
+        /* 图片消息 */
+        .message-images { display: grid; gap: 4px; margin-top: 8px; border-radius: var(--radius-md); overflow: hidden; }
+        .message-images img { width: 100%; border-radius: var(--radius-sm); }
+        .message-images.single img { max-height: 200px; object-fit: cover; }
+        .message-images.multiple { grid-template-columns: repeat(2, 1fr); }
         
-        /* AI 提示 */
-        .ai-tip { background: var(--primary-bg); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
-        .ai-tip-icon { width: 36px; height: 36px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-        .ai-tip-icon i { font-size: 16px; color: white; }
-        .ai-tip-content { flex: 1; }
-        .ai-tip-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
-        .ai-tip-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+        /* AI 预览卡片 */
+        .preview-card { background: var(--bg-card); border-radius: var(--radius-lg); margin-top: 10px; box-shadow: var(--shadow-sm); overflow: hidden; }
+        .preview-header { padding: 14px 16px; background: var(--primary-bg); display: flex; align-items: center; gap: 10px; }
+        .preview-header i { color: var(--primary); }
+        .preview-header span { font-size: 14px; font-weight: 600; color: var(--primary); }
+        .preview-body { padding: 16px; }
+        .preview-field { margin-bottom: 12px; }
+        .preview-field:last-child { margin-bottom: 0; }
+        .preview-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .preview-value { font-size: 15px; color: var(--text-primary); font-weight: 500; }
+        .preview-value.editable { background: var(--bg-muted); padding: 10px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .preview-value.editable:active { background: var(--border-light); }
+        .preview-value input { border: none; background: transparent; font-size: 15px; color: var(--text-primary); width: 100%; outline: none; font-weight: 500; }
+        .preview-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .preview-tag { background: var(--bg-muted); color: var(--text-secondary); padding: 5px 12px; border-radius: var(--radius-full); font-size: 13px; }
+        .preview-actions { display: flex; gap: 10px; padding: 14px 16px; border-top: 0.5px solid var(--border-light); }
+        .preview-btn { flex: 1; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; border: none; transition: all 0.2s; }
+        .preview-btn.edit { background: var(--bg-muted); color: var(--text-secondary); }
+        .preview-btn.confirm { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
         
-        /* 发布按钮 */
-        .submit-area { padding: 20px 16px; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--bg-card); border-top: 0.5px solid var(--border-light); }
-        .submit-btn { width: 100%; height: 54px; background: var(--primary-gradient); border: none; border-radius: var(--radius-xl); color: white; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: var(--shadow-md); transition: all 0.2s; }
-        .submit-btn:active { transform: scale(0.98); box-shadow: var(--shadow-sm); }
+        /* 快捷选项 */
+        .quick-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .quick-option { background: var(--bg-muted); border: 1px solid var(--border-light); padding: 8px 14px; border-radius: var(--radius-full); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+        .quick-option:active { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
+        
+        /* 输入区域 */
+        .input-area { padding: 12px 16px; background: var(--bg-card); border-top: 0.5px solid var(--border-light); }
+        
+        /* 图片预览 */
+        .image-preview { display: flex; gap: 8px; margin-bottom: 10px; }
+        .image-preview-item { width: 60px; height: 60px; border-radius: var(--radius-md); overflow: hidden; position: relative; }
+        .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .image-preview-item .remove { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .image-preview-item .remove i { font-size: 8px; color: white; }
+        
+        .input-row { display: flex; align-items: flex-end; gap: 10px; }
+        .input-field { flex: 1; background: var(--bg-muted); border-radius: var(--radius-xl); padding: 12px 16px; display: flex; align-items: center; }
+        .input-field textarea { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; resize: none; max-height: 100px; color: var(--text-primary); line-height: 1.4; }
+        .input-field textarea::placeholder { color: var(--text-muted); }
+        
+        .input-actions { display: flex; gap: 6px; }
+        .action-btn { width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .action-btn.image { background: var(--bg-muted); color: var(--text-muted); }
+        .action-btn.image:active { background: var(--primary-bg); color: var(--primary); }
+        .action-btn.voice { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
+        .action-btn.voice:active { transform: scale(0.95); }
+        .action-btn.voice.recording { background: var(--error); animation: pulse 1s infinite; }
+        .action-btn.send { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
+        .action-btn.send:disabled { background: var(--bg-muted); color: var(--text-muted); box-shadow: none; }
+        
+        /* 语音提示 */
+        .voice-hint { text-align: center; padding: 8px; font-size: 12px; color: var(--text-muted); }
+        .voice-hint.recording { color: var(--error); }
+        
+        /* 类型选择弹窗 */
+        .type-modal { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: var(--bg-card); border-radius: var(--radius-xl) var(--radius-xl) 0 0; z-index: 200; display: none; flex-direction: column; box-shadow: var(--shadow-xl); }
+        .type-modal.show { display: flex; animation: slideUp 0.3s ease; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 0.5px solid var(--border-light); }
+        .modal-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+        .modal-close { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-muted); }
+        .modal-body { padding: 16px; }
+        .type-option { display: flex; align-items: center; padding: 16px; background: var(--bg-muted); border-radius: var(--radius-lg); margin-bottom: 10px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+        .type-option:active { transform: scale(0.99); }
+        .type-option.selected { border-color: var(--primary); background: var(--primary-bg); }
+        .type-icon { width: 48px; height: 48px; background: var(--bg-card); border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; margin-right: 14px; }
+        .type-option.selected .type-icon { background: var(--primary-gradient); }
+        .type-icon i { font-size: 22px; color: var(--text-muted); }
+        .type-option.selected .type-icon i { color: white; }
+        .type-text h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .type-text p { font-size: 13px; color: var(--text-muted); }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 150; display: none; }
+        .modal-overlay.show { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
     </style>
 </head>
 <body>
@@ -78,129 +132,110 @@
             <div class="nav-close" onclick="location.href='hall.html'">
                 <i class="fas fa-times"></i>
             </div>
-            <div class="nav-title">发布</div>
-            <div class="nav-publish" onclick="submitForm()">发布</div>
+            <div class="nav-title">
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <span>跟分身说</span>
+            </div>
+            <div class="nav-action"></div>
         </div>
 
-        <!-- Tab切换 -->
-        <div class="tab-switch">
-            <div class="tab-btn active" onclick="switchType('provide')">我可以提供</div>
-            <div class="tab-btn" onclick="switchType('need')">我需要帮助</div>
-        </div>
-
-        <!-- AI 提示 -->
-        <div class="form-section">
-            <div class="ai-tip">
-                <div class="ai-tip-icon"><i class="fas fa-magic"></i></div>
-                <div class="ai-tip-content">
-                    <div class="ai-tip-title">AI 分身小贴士</div>
-                    <div class="ai-tip-text">描述越详细，分身匹配越精准哦~ 我会自动帮你打标签、推荐给合适的邻居</div>
+        <div class="messages-container" id="messagesContainer">
+            <!-- 初始消息 -->
+            <div class="message-item received">
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content">
+                    <div class="message-bubble">你好呀！想发布什么呢？跟我说说就行~</div>
+                    <div class="message-time">刚刚</div>
+                    <div class="quick-options">
+                        <div class="quick-option" onclick="quickInput('我可以帮忙遛狗')">🐕 遛狗</div>
+                        <div class="quick-option" onclick="quickInput('我会修家电')">🔧 维修</div>
+                        <div class="quick-option" onclick="quickInput('需要人帮忙')">🙏 求助</div>
+                        <div class="quick-option" onclick="quickInput('想找人一起')">👥 组局</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="form-section">
-            <!-- 标题 -->
-            <div class="form-group">
-                <label class="form-label">标题</label>
-                <input type="text" class="form-input" id="title" placeholder="一句话说清楚，如：周末可以帮忙遛狗">
-            </div>
-
-            <!-- 描述 -->
-            <div class="form-group">
-                <label class="form-label">详细描述</label>
-                <textarea class="form-input form-textarea" id="desc" placeholder="详细说明一下，方便邻居了解~"></textarea>
-            </div>
-
-            <!-- 图片 -->
-            <div class="form-group">
-                <label class="form-label">图片 <span style="font-weight: 400; color: var(--text-muted);">（选填，最多9张）</span></label>
-                <div class="image-upload" id="imageUpload">
-                    <div class="image-add" onclick="addImage()">
-                        <i class="fas fa-plus"></i>
-                        <span>添加图片</span>
+        <div class="input-area">
+            <div class="image-preview" id="imagePreview"></div>
+            <div class="input-row">
+                <div class="input-field">
+                    <textarea id="messageInput" rows="1" placeholder="说点什么，或按住语音..." oninput="autoResize(this); checkInput()"></textarea>
+                </div>
+                <div class="input-actions">
+                    <div class="action-btn image" onclick="addImage()">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="action-btn voice" id="voiceBtn" onclick="toggleVoice()">
+                        <i class="fas fa-microphone"></i>
                     </div>
                 </div>
             </div>
-
-            <!-- 分类 -->
-            <div class="form-group">
-                <label class="form-label">分类</label>
-                <div class="category-grid">
-                    <div class="category-item active" onclick="selectCategory(this)">
-                        <i class="fas fa-home"></i>
-                        <span>生活服务</span>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <i class="fas fa-tools"></i>
-                        <span>技能互助</span>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <i class="fas fa-box"></i>
-                        <span>物品借用</span>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <i class="fas fa-users"></i>
-                        <span>活动组局</span>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <i class="fas fa-hand-holding-heart"></i>
-                        <span>临时帮忙</span>
-                    </div>
-                    <div class="category-item" onclick="selectCategory(this)">
-                        <i class="fas fa-info-circle"></i>
-                        <span>信息咨询</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 价格 -->
-            <div class="form-group">
-                <label class="form-label">价格</label>
-                <div class="price-row">
-                    <div class="price-input">
-                        <input type="text" class="form-input" id="price" placeholder="输入金额或留空面议">
-                    </div>
-                    <select class="form-input unit-select" id="unit">
-                        <option>次</option>
-                        <option>小时</option>
-                        <option>天</option>
-                        <option>个</option>
-                        <option>面议</option>
-                    </select>
-                </div>
-            </div>
+            <div class="voice-hint" id="voiceHint">按住说话，松开发送</div>
         </div>
 
-        <div class="submit-area">
-            <button class="submit-btn" onclick="submitForm()">
-                <i class="fas fa-paper-plane"></i>
-                发布并让分身去匹配
-            </button>
+        <!-- 类型选择弹窗 -->
+        <div class="modal-overlay" id="modalOverlay" onclick="closeTypeModal()"></div>
+        <div class="type-modal" id="typeModal">
+            <div class="modal-header">
+                <div class="modal-title">这是什么类型的发布？</div>
+                <div class="modal-close" onclick="closeTypeModal()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="modal-body">
+                <div class="type-option" onclick="selectType('provide')">
+                    <div class="type-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <div class="type-text">
+                        <h4>我可以提供</h4>
+                        <p>你有技能、服务、物品可以分享</p>
+                    </div>
+                </div>
+                <div class="type-option" onclick="selectType('need')">
+                    <div class="type-icon"><i class="fas fa-hands-helping"></i></div>
+                    <div class="type-text">
+                        <h4>我需要帮助</h4>
+                        <p>你需要邻居的帮助或服务</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        let publishType = 'provide';
         let selectedImages = [];
+        let isRecording = false;
+        let publishType = null;
+        let collectedInfo = {
+            title: '',
+            desc: '',
+            price: '',
+            tags: [],
+            category: ''
+        };
 
-        function switchType(type) {
-            publishType = type;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+        }
+
+        function checkInput() {
+            const input = document.getElementById('messageInput');
+            const hasText = input.value.trim().length > 0;
+            const hasImages = selectedImages.length > 0;
             
-            // 更新提示文案
-            const tip = document.querySelector('.ai-tip-text');
-            if (type === 'provide') {
-                tip.textContent = '描述越详细，分身匹配越精准哦~ 我会自动帮你打标签、推荐给合适的邻居';
+            // 更新语音按钮状态
+            const voiceBtn = document.getElementById('voiceBtn');
+            if (hasText || hasImages) {
+                voiceBtn.className = 'action-btn send';
+                voiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             } else {
-                tip.textContent = '告诉我你需要什么，分身会帮你找到能帮忙的邻居~';
+                voiceBtn.className = 'action-btn voice';
+                voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
             }
         }
 
-        function selectCategory(el) {
-            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
+        function quickInput(text) {
+            document.getElementById('messageInput').value = text;
+            checkInput();
         }
 
         function addImage() {
@@ -209,50 +244,263 @@
                 return;
             }
             
-            // 模拟添加图片
             const randomId = Math.floor(Math.random() * 100);
             selectedImages.push(`https://picsum.photos/400/400?random=${randomId}`);
-            renderImages();
+            renderImagePreview();
+            checkInput();
         }
 
         function removeImage(index) {
             selectedImages.splice(index, 1);
-            renderImages();
+            renderImagePreview();
+            checkInput();
         }
 
-        function renderImages() {
-            const container = document.getElementById('imageUpload');
+        function renderImagePreview() {
+            const container = document.getElementById('imagePreview');
             container.innerHTML = selectedImages.map((img, i) => `
-                <div class="image-item">
-                    <img src="${img}" alt="图片">
+                <div class="image-preview-item">
+                    <img src="${img}" alt="预览">
                     <div class="remove" onclick="removeImage(${i})">
                         <i class="fas fa-times"></i>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function toggleVoice() {
+            const input = document.getElementById('messageInput');
+            const hasText = input.value.trim().length > 0;
+            const hasImages = selectedImages.length > 0;
             
-            if (selectedImages.length < 9) {
-                container.innerHTML += `
-                    <div class="image-add" onclick="addImage()">
-                        <i class="fas fa-plus"></i>
-                        <span>添加图片</span>
-                    </div>
-                `;
+            if (hasText || hasImages) {
+                // 发送消息
+                sendMessage();
+            } else {
+                // 切换录音状态
+                isRecording = !isRecording;
+                const voiceBtn = document.getElementById('voiceBtn');
+                const voiceHint = document.getElementById('voiceHint');
+                
+                if (isRecording) {
+                    voiceBtn.classList.add('recording');
+                    voiceHint.classList.add('recording');
+                    voiceHint.textContent = '🔴 正在录音...松开结束';
+                } else {
+                    voiceBtn.classList.remove('recording');
+                    voiceHint.classList.remove('recording');
+                    voiceHint.textContent = '按住说话，松开发送';
+                    
+                    // 模拟语音识别结果
+                    setTimeout(() => {
+                        addAIMessage('我听到你说："周末可以帮忙遛狗，我有经验，家里也养了金毛"~ 是这样吗？');
+                    }, 500);
+                }
             }
         }
 
-        function submitForm() {
-            const title = document.getElementById('title').value.trim();
-            const desc = document.getElementById('desc').value.trim();
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
             
-            if (!title) {
-                alert('请填写标题');
-                return;
+            if (!text && selectedImages.length === 0) return;
+            
+            const container = document.getElementById('messagesContainer');
+            const now = new Date();
+            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            
+            // 添加用户消息
+            let messageHTML = `
+                <div class="message-item sent">
+                    <div class="message-avatar"><i class="fas fa-user"></i></div>
+                    <div class="message-content">
+                        ${text ? `<div class="message-bubble">${text}</div>` : ''}
+            `;
+            
+            if (selectedImages.length > 0) {
+                const gridClass = selectedImages.length === 1 ? 'single' : 'multiple';
+                messageHTML += `
+                    <div class="message-images ${gridClass}">
+                        ${selectedImages.map(img => `<img src="${img}" alt="图片">`).join('')}
+                    </div>
+                `;
             }
             
-            alert('发布成功！分身正在为你匹配...');
-            location.href = 'hall.html';
+            messageHTML += `<div class="message-time">${time}</div></div></div>`;
+            container.innerHTML += messageHTML;
+            
+            // 收集信息
+            collectedInfo.desc = text;
+            
+            // 清空输入
+            input.value = '';
+            input.style.height = 'auto';
+            selectedImages = [];
+            renderImagePreview();
+            checkInput();
+            
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+            
+            // AI 响应
+            setTimeout(() => {
+                if (!publishType) {
+                    showTypeModal();
+                } else {
+                    processWithAI();
+                }
+            }, 800);
         }
+
+        function addAIMessage(text, extraContent = '') {
+            const container = document.getElementById('messagesContainer');
+            const now = new Date();
+            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            
+            container.innerHTML += `
+                <div class="message-item received">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content">
+                        <div class="message-bubble">${text}</div>
+                        ${extraContent}
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypeModal() {
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('typeModal').classList.add('show');
+        }
+
+        function closeTypeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.getElementById('typeModal').classList.remove('show');
+        }
+
+        function selectType(type) {
+            publishType = type;
+            closeTypeModal();
+            
+            // 更新选项UI
+            document.querySelectorAll('.type-option').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // AI 继续
+            setTimeout(() => {
+                processWithAI();
+            }, 300);
+        }
+
+        function processWithAI() {
+            // 模拟AI整理信息
+            collectedInfo.title = extractTitle(collectedInfo.desc);
+            collectedInfo.tags = extractTags(collectedInfo.desc);
+            collectedInfo.price = extractPrice(collectedInfo.desc);
+            
+            // 显示预览卡片
+            const previewHTML = `
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <i class="fas fa-magic"></i>
+                        <span>帮你整理好了，确认一下？</span>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-field">
+                            <div class="preview-label">标题</div>
+                            <div class="preview-value editable" onclick="editField('title')">
+                                <input type="text" id="editTitle" value="${collectedInfo.title}" placeholder="点击编辑">
+                                <i class="fas fa-pen" style="color: var(--text-muted); font-size: 12px;"></i>
+                            </div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">描述</div>
+                            <div class="preview-value editable" onclick="editField('desc')">
+                                <input type="text" id="editDesc" value="${collectedInfo.desc}" placeholder="点击编辑">
+                                <i class="fas fa-pen" style="color: var(--text-muted); font-size: 12px;"></i>
+                            </div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">价格</div>
+                            <div class="preview-value editable" onclick="editField('price')">
+                                <input type="text" id="editPrice" value="${collectedInfo.price || '面议'}" placeholder="点击编辑">
+                                <i class="fas fa-pen" style="color: var(--text-muted); font-size: 12px;"></i>
+                            </div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">标签（自动识别）</div>
+                            <div class="preview-tags">
+                                ${collectedInfo.tags.map(t => `<span class="preview-tag">#${t}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-actions">
+                        <div class="preview-btn edit" onclick="continueChat()">继续说</div>
+                        <div class="preview-btn confirm" onclick="confirmPublish()">确认发布</div>
+                    </div>
+                </div>
+            `;
+            
+            addAIMessage('我帮你整理了一下，看看对不对？', previewHTML);
+        }
+
+        function extractTitle(desc) {
+            if (desc.includes('遛狗')) return '周末遛狗服务';
+            if (desc.includes('维修') || desc.includes('修')) return '家电维修服务';
+            if (desc.includes('辅导')) return '作业辅导';
+            if (desc.includes('蛋糕') || desc.includes('烘焙')) return '手工烘焙';
+            return desc.substring(0, 15) + (desc.length > 15 ? '...' : '');
+        }
+
+        function extractTags(desc) {
+            const tags = [];
+            if (desc.includes('遛') || desc.includes('狗')) tags.push('宠物');
+            if (desc.includes('周末')) tags.push('周末');
+            if (desc.includes('维修') || desc.includes('修')) tags.push('维修');
+            if (desc.includes('辅导') || desc.includes('作业')) tags.push('辅导');
+            if (tags.length === 0) tags.push('生活服务');
+            return tags;
+        }
+
+        function extractPrice(desc) {
+            const match = desc.match(/(\d+)\s*[元块]/);
+            return match ? match[1] + '元' : '';
+        }
+
+        function editField(field) {
+            event.stopPropagation();
+        }
+
+        function continueChat() {
+            addAIMessage('好的，继续说~ 还有什么要补充的吗？');
+            document.getElementById('messageInput').focus();
+        }
+
+        function confirmPublish() {
+            // 获取编辑后的值
+            collectedInfo.title = document.getElementById('editTitle')?.value || collectedInfo.title;
+            collectedInfo.desc = document.getElementById('editDesc')?.value || collectedInfo.desc;
+            collectedInfo.price = document.getElementById('editPrice')?.value || collectedInfo.price;
+            
+            addAIMessage('发布成功！✨ 我会帮你找到合适的邻居~');
+            
+            setTimeout(() => {
+                if (confirm('去看看大厅？')) {
+                    location.href = 'hall.html';
+                }
+            }, 1000);
+        }
+
+        // 回车发送
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html>
