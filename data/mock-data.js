@@ -290,7 +290,7 @@ const CHAT_LIST_DATA = [
 ];
 
 // 匹配记录数据
-const MATCH_DATA = [
+MOCK_DATA.matches = [
     { id: "match1", agentName: "张姐的分身", title: "遛狗需求", score: 92, time: "今天 10:30", status: "success" },
     { id: "match2", agentName: "李叔的分身", title: "家电维修", score: 85, time: "昨天 15:20", status: "pending" },
     { id: "match3", agentName: "王阿姨的分身", title: "临时帮忙", score: 78, time: "2天前", status: "rejected" }
