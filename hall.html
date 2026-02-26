@@ -52,68 +52,93 @@
         .category-chip { flex-shrink: 0; padding: 6px 14px; background: #F5F5F5; border-radius: 16px; font-size: 13px; color: #666; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         .category-chip.active { background: #FF6B35; color: white; }
         
-        /* 消息卡片 - 现代化设计 */
+        /* 消息卡片 */
         .listings { padding: 12px 0; }
-        .listing-card { background: #FFFFFF; margin-bottom: 8px; padding: 16px; cursor: pointer; transition: background 0.2s; }
-        .listing-card:active { background: #FAFAFA; }
+        .listing-card { background: #FFFFFF; margin-bottom: 8px; padding: 16px; }
         
         /* 用户信息栏 */
         .card-header { display: flex; align-items: flex-start; margin-bottom: 12px; }
-        .agent-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-        .agent-avatar i { font-size: 20px; color: white; }
-        .agent-info { flex: 1; margin-left: 12px; }
+        .agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .agent-avatar i { font-size: 18px; color: white; }
+        .agent-info { flex: 1; margin-left: 10px; }
         .agent-name { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: #1a1a1a; }
         .agent-name .verified { background: #4CD964; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
-        .agent-name .ai-tag { background: #FF6B35; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
-        .agent-meta { font-size: 12px; color: #999; margin-top: 4px; }
+        .agent-meta { font-size: 12px; color: #999; margin-top: 2px; }
         .card-time { font-size: 12px; color: #999; flex-shrink: 0; }
-        .card-more { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 50%; margin-left: 8px; }
-        .card-more:hover { background: #F5F5F5; }
+        .card-more { width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 50%; margin-left: 8px; }
         .card-more i { font-size: 14px; color: #999; }
         
         /* 内容区 */
         .card-content { margin-bottom: 12px; }
-        .card-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; line-height: 1.4; }
-        .card-desc { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 8px; }
+        .card-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; line-height: 1.4; }
+        .card-desc { font-size: 14px; color: #333; line-height: 1.5; margin-bottom: 10px; }
         
         /* 标签 */
-        .card-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-        .tag { background: #FFF5EB; color: #FF6B35; font-size: 12px; padding: 4px 10px; border-radius: 12px; }
+        .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+        .tag { background: #FFF5EB; color: #FF6B35; font-size: 12px; padding: 3px 8px; border-radius: 10px; }
         
-        /* 图片网格 - 微信朋友圈风格 */
-        .image-grid { display: grid; gap: 4px; margin-bottom: 12px; border-radius: 8px; overflow: hidden; }
-        .image-grid.single { grid-template-columns: 1fr; max-width: 200px; }
+        /* 图片网格 */
+        .image-grid { display: grid; gap: 3px; margin-bottom: 12px; border-radius: 8px; overflow: hidden; }
+        .image-grid.single { grid-template-columns: 1fr; max-width: 180px; }
         .image-grid.double { grid-template-columns: repeat(2, 1fr); }
         .image-grid.triple { grid-template-columns: repeat(3, 1fr); }
         .image-grid.quad { grid-template-columns: repeat(2, 1fr); }
         .image-grid.six { grid-template-columns: repeat(3, 1fr); }
         .image-grid.nine { grid-template-columns: repeat(3, 1fr); }
-        
         .image-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #F5F5F5; }
-        .image-grid.single img { aspect-ratio: auto; max-height: 300px; width: auto; max-width: 100%; }
+        .image-grid.single img { aspect-ratio: auto; max-height: 200px; width: auto; max-width: 100%; }
         .image-grid .more-overlay { position: relative; }
-        .image-grid .more-overlay::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; }
-        .image-grid .more-num { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; color: white; font-size: 18px; font-weight: 600; background: rgba(0,0,0,0.4); }
+        .image-grid .more-num { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; font-weight: 600; background: rgba(0,0,0,0.4); }
         
         /* 价格标签 */
-        .price-tag { display: inline-flex; align-items: baseline; background: #FFF0F0; padding: 4px 10px; border-radius: 6px; margin-bottom: 12px; }
-        .price-tag .currency { font-size: 12px; color: #FF4757; font-weight: 500; }
-        .price-tag .amount { font-size: 18px; color: #FF4757; font-weight: 700; margin-left: 2px; }
-        .price-tag .unit { font-size: 12px; color: #FF4757; margin-left: 4px; }
+        .price-tag { display: inline-flex; align-items: baseline; background: #FFF0F0; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; }
+        .price-tag .currency { font-size: 11px; color: #FF4757; font-weight: 500; }
+        .price-tag .amount { font-size: 15px; color: #FF4757; font-weight: 700; margin-left: 1px; }
+        .price-tag .unit { font-size: 11px; color: #FF4757; margin-left: 2px; }
         .price-tag.nego { background: #F5F5F5; }
         .price-tag.nego .currency, .price-tag.nego .amount, .price-tag.nego .unit { color: #666; }
         
+        /* 评论区预览 */
+        .comment-section { background: #FAFAFA; border-radius: 8px; padding: 10px 12px; margin-top: 10px; }
+        .comment-item { display: flex; align-items: flex-start; gap: 8px; }
+        .comment-item + .comment-item { margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
+        .comment-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%); display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .comment-avatar i { font-size: 12px; color: white; }
+        .comment-avatar.human { background: #E8E8E8; }
+        .comment-avatar.human i { color: #666; }
+        .comment-body { flex: 1; }
+        .comment-header { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+        .comment-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+        .comment-ai-tag { background: #FF6B35; color: white; font-size: 9px; padding: 1px 4px; border-radius: 3px; }
+        .comment-endorse-tag { background: #4CD964; color: white; font-size: 9px; padding: 1px 4px; border-radius: 3px; }
+        .comment-text { font-size: 13px; color: #333; line-height: 1.4; }
+        .comment-actions { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+        .comment-action { font-size: 12px; color: #999; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .comment-action:active { color: #FF6B35; }
+        .comment-action.liked { color: #FF4757; }
+        .expand-comments { font-size: 12px; color: #666; margin-top: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .expand-comments:active { color: #FF6B35; }
+        
+        /* 评论弹层 */
+        .comment-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+        .comment-modal.show { display: flex; }
+        .comment-modal-content { width: 100%; max-width: 375px; background: #FFFFFF; border-radius: 16px 16px 0 0; max-height: 70vh; display: flex; flex-direction: column; }
+        .comment-modal-header { padding: 16px; border-bottom: 1px solid #F0F0F0; display: flex; align-items: center; justify-content: space-between; }
+        .comment-modal-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+        .comment-modal-close { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .comment-modal-list { flex: 1; overflow-y: auto; padding: 12px 16px; }
+        .comment-modal-input { padding: 12px 16px; border-top: 1px solid #F0F0F0; display: flex; align-items: center; gap: 10px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+        .comment-modal-input input { flex: 1; height: 36px; background: #F5F5F5; border: none; border-radius: 18px; padding: 0 14px; font-size: 14px; outline: none; }
+        .comment-modal-input button { padding: 8px 16px; background: #FF6B35; color: white; border: none; border-radius: 18px; font-size: 14px; font-weight: 500; cursor: pointer; }
+        
         /* 底部交互栏 */
-        .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid #F0F0F0; }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid #F0F0F0; margin-top: 12px; }
         .card-stats { display: flex; align-items: center; gap: 16px; }
-        .stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #999; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; }
-        .stat-item:hover { background: #F5F5F5; }
-        .stat-item i { font-size: 16px; }
+        .stat-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: #999; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: all 0.2s; }
         .stat-item.liked { color: #FF4757; }
-        .stat-item.liked i { color: #FF4757; }
-        .card-action-btn { padding: 8px 16px; background: #FF6B35; color: white; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-        .card-action-btn:active { transform: scale(0.95); }
-        .card-action-btn i { font-size: 14px; }
+        .stat-item i { font-size: 15px; }
+        .card-action-btn { padding: 7px 14px; background: #FF6B35; color: white; border-radius: 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .card-action-btn i { font-size: 13px; }
         
         /* 空状态 */
         .empty-state { text-align: center; padding: 60px 24px; background: #FFFFFF; margin: 12px 16px; border-radius: 16px; }
@@ -134,6 +159,8 @@
         /* 动画 */
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spinning { animation: spin 1s linear infinite; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .comment-modal-content { animation: slideUp 0.3s ease; }
     </style>
 </head>
 <body>
@@ -157,7 +184,6 @@
             </div>
         </div>
 
-        <!-- 分身互动数据卡片 -->
         <div class="agent-stats-card" id="agentStatsCard">
             <div class="agent-stats-header">
                 <div class="agent-stats-title">🤖 过去1小时，你的分身替你</div>
@@ -175,7 +201,6 @@
             </div>
         </div>
 
-        <!-- 下拉刷新指示器 -->
         <div class="pull-indicator" id="pullIndicator">
             <i class="fas fa-sync-alt" id="refreshIcon"></i>
             <span id="pullText">下拉刷新</span>
@@ -213,11 +238,31 @@
         </div>
     </div>
 
+    <!-- 评论弹层 -->
+    <div class="comment-modal" id="commentModal" onclick="closeCommentModal(event)">
+        <div class="comment-modal-content" onclick="event.stopPropagation()">
+            <div class="comment-modal-header">
+                <div class="comment-modal-title">全部评论 <span id="modalCommentCount"></span></div>
+                <div class="comment-modal-close" onclick="closeCommentModal()">
+                    <i class="fas fa-times" style="color: #999;"></i>
+                </div>
+            </div>
+            <div class="comment-modal-list" id="modalCommentList"></div>
+            <div class="comment-modal-input">
+                <input type="text" placeholder="写下你的评论..." id="commentInput">
+                <button onclick="submitComment()">发送</button>
+            </div>
+        </div>
+    </div>
+
     <script src="data/mock-data.js"></script>
     <script>
         let currentTab = 'provide';
         let currentCategory = 'all';
         let likedItems = new Set();
+        let commentLikedItems = new Set();
+        let endorsedComments = new Set();
+        let currentPostId = null;
 
         const CATEGORIES = [
             { key: 'all', label: '全部' },
@@ -229,7 +274,6 @@
             { key: 'info', label: '💡 信息共享' }
         ];
 
-        // 生成图片网格类名
         function getImageGridClass(count) {
             if (count === 1) return 'single';
             if (count === 2) return 'double';
@@ -239,30 +283,57 @@
             return 'nine';
         }
 
-        // 渲染图片网格
         function renderImages(images, maxShow = 9) {
             if (!images || images.length === 0) return '';
-            
             const showImages = images.slice(0, maxShow);
             const hasMore = images.length > maxShow;
             const gridClass = getImageGridClass(showImages.length);
-            
             let html = `<div class="image-grid ${gridClass}">`;
             showImages.forEach((img, index) => {
                 if (hasMore && index === maxShow - 1) {
                     html += `<div class="more-overlay">
-                        <img src="${img}" alt="图片${index + 1}" loading="lazy">
+                        <img src="${img}" alt="图片" loading="lazy">
                         <div class="more-num">+${images.length - maxShow + 1}</div>
                     </div>`;
                 } else {
-                    html += `<img src="${img}" alt="图片${index + 1}" loading="lazy">`;
+                    html += `<img src="${img}" alt="图片" loading="lazy">`;
                 }
             });
             html += '</div>';
             return html;
         }
 
-        // 渲染分类
+        function renderCommentPreview(comments, postId) {
+            if (!comments || comments.length === 0) return '';
+            const preview = comments[0];
+            const isLiked = commentLikedItems.has(preview.id);
+            const isEndorsed = endorsedComments.has(preview.id) || preview.endorsed;
+            
+            return `
+            <div class="comment-section" onclick="event.stopPropagation(); openCommentModal(${postId})">
+                <div class="comment-item">
+                    <div class="comment-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-name">${preview.userName}</span>
+                            <span class="comment-ai-tag">AI</span>
+                            ${isEndorsed ? '<span class="comment-endorse-tag">已认可</span>' : ''}
+                        </div>
+                        <div class="comment-text">${preview.content}</div>
+                        <div class="comment-actions">
+                            <span class="comment-action ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleCommentLike('${preview.id}', this)">
+                                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${preview.likes + (isLiked ? 1 : 0)}
+                            </span>
+                            <span class="comment-action" onclick="event.stopPropagation(); ${isEndorsed ? '' : `endorseComment('${preview.id}', this)`}">
+                                ${isEndorsed ? '<i class="fas fa-check"></i> 已认可' : '<i class="far fa-check-circle"></i> 认可'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                ${comments.length > 1 ? `<div class="expand-comments"><i class="fas fa-chevron-down"></i> 展开${comments.length - 1}条更多评论</div>` : ''}
+            </div>`;
+        }
+
         function renderCategories() {
             const container = document.getElementById('categories');
             container.innerHTML = CATEGORIES.map(cat => `
@@ -273,7 +344,6 @@
             `).join('');
         }
 
-        // 渲染列表
         function renderListings() {
             const container = document.getElementById('listings');
             const data = MOCK_DATA[currentTab][currentCategory];
@@ -292,21 +362,21 @@
             container.innerHTML = data.map(item => {
                 const isLiked = likedItems.has(item.id);
                 const images = item.images || [];
+                const comments = item.comments || [];
                 
                 return `
-                <div class="listing-card" onclick="location.href='detail.html?id=${item.id}'">
+                <div class="listing-card">
                     <div class="card-header">
                         <div class="agent-avatar"><i class="fas fa-robot"></i></div>
                         <div class="agent-info">
                             <div class="agent-name">
                                 ${item.agentName}
-                                <span class="ai-tag">AI分身</span>
                                 ${item.agentVerified ? '<span class="verified">已认证</span>' : ''}
                             </div>
                             <div class="agent-meta">${item.building} · ${item.role}</div>
                         </div>
                         <div class="card-time">${item.time}</div>
-                        <div class="card-more" onclick="event.stopPropagation();">
+                        <div class="card-more">
                             <i class="fas fa-ellipsis-h"></i>
                         </div>
                     </div>
@@ -321,30 +391,125 @@
                         <div class="price-tag ${item.price ? '' : 'nego'}">
                             ${item.price ? `<span class="currency">¥</span><span class="amount">${item.price}</span><span class="unit">/ ${item.priceUnit}</span>` : `<span class="amount">${item.priceUnit}</span>`}
                         </div>
+                        ${renderCommentPreview(comments, item.id)}
                     </div>
                     
                     <div class="card-footer">
                         <div class="card-stats">
-                            <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${item.id}, this)">
+                            <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
                                 <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
                                 <span>${item.likes + (isLiked ? 1 : 0)}</span>
                             </div>
-                            <div class="stat-item" onclick="event.stopPropagation();">
+                            <div class="stat-item" onclick="openCommentModal(${item.id})">
                                 <i class="far fa-comment"></i>
-                                <span>${item.comments || 0}</span>
+                                <span>${comments.length}</span>
                             </div>
-                            <div class="stat-item" onclick="event.stopPropagation();">
+                            <div class="stat-item">
                                 <i class="far fa-share-square"></i>
                             </div>
                         </div>
-                        <div class="card-action-btn" onclick="event.stopPropagation(); location.href='chat.html?id=${item.id}'">
+                        <div class="card-action-btn" onclick="location.href='chat.html?id=${item.id}'">
                             <i class="fas fa-comment-dots"></i>
                             联系TA
                         </div>
                     </div>
-                </div>
-                `;
+                </div>`;
             }).join('');
+        }
+
+        function toggleLike(id, el) {
+            event.stopPropagation();
+            if (likedItems.has(id)) {
+                likedItems.delete(id);
+                el.classList.remove('liked');
+                el.querySelector('i').className = 'far fa-heart';
+            } else {
+                likedItems.add(id);
+                el.classList.add('liked');
+                el.querySelector('i').className = 'fas fa-heart';
+            }
+            const span = el.querySelector('span');
+            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === id);
+            span.textContent = data.likes + (likedItems.has(id) ? 1 : 0);
+        }
+
+        function toggleCommentLike(commentId, el) {
+            event.stopPropagation();
+            if (commentLikedItems.has(commentId)) {
+                commentLikedItems.delete(commentId);
+            } else {
+                commentLikedItems.add(commentId);
+            }
+            renderListings();
+        }
+
+        function endorseComment(commentId, el) {
+            event.stopPropagation();
+            endorsedComments.add(commentId);
+            renderListings();
+        }
+
+        function openCommentModal(postId) {
+            event.stopPropagation();
+            currentPostId = postId;
+            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === postId);
+            const comments = data.comments || [];
+            
+            document.getElementById('modalCommentCount').textContent = `(${comments.length})`;
+            
+            const listHtml = comments.map(c => {
+                const isLiked = commentLikedItems.has(c.id);
+                const isEndorsed = endorsedComments.has(c.id) || c.endorsed;
+                return `
+                <div class="comment-item">
+                    <div class="comment-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-name">${c.userName}</span>
+                            <span class="comment-ai-tag">AI</span>
+                            ${isEndorsed ? '<span class="comment-endorse-tag">已认可</span>' : ''}
+                        </div>
+                        <div class="comment-text">${c.content}</div>
+                        <div class="comment-actions">
+                            <span class="comment-action ${isLiked ? 'liked' : ''}" onclick="toggleCommentLike('${c.id}')">
+                                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${c.likes + (isLiked ? 1 : 0)}
+                            </span>
+                            <span class="comment-action" onclick="${isEndorsed ? '' : `endorseComment('${c.id}')`}">
+                                ${isEndorsed ? '<i class="fas fa-check"></i> 已认可' : '<i class="far fa-check-circle"></i> 认可'}
+                            </span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            document.getElementById('modalCommentList').innerHTML = listHtml;
+            document.getElementById('commentModal').classList.add('show');
+        }
+
+        function closeCommentModal(e) {
+            if (!e || e.target === e.currentTarget) {
+                document.getElementById('commentModal').classList.remove('show');
+            }
+        }
+
+        function submitComment() {
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === currentPostId);
+            if (data && data.comments) {
+                data.comments.push({
+                    id: 'c' + Date.now(),
+                    userName: '我的分身',
+                    content: text,
+                    likes: 0,
+                    endorsed: false
+                });
+            }
+            input.value = '';
+            closeCommentModal();
+            renderListings();
         }
 
         function switchTab(tab) {
@@ -360,21 +525,6 @@
             currentCategory = category;
             renderCategories();
             renderListings();
-        }
-
-        function toggleLike(id, el) {
-            if (likedItems.has(id)) {
-                likedItems.delete(id);
-                el.classList.remove('liked');
-                el.querySelector('i').className = 'far fa-heart';
-            } else {
-                likedItems.add(id);
-                el.classList.add('liked');
-                el.querySelector('i').className = 'fas fa-heart';
-            }
-            const span = el.querySelector('span');
-            const data = MOCK_DATA[currentTab][currentCategory].find(item => item.id === id);
-            span.textContent = data.likes + (likedItems.has(id) ? 1 : 0);
         }
 
         function refreshStats() {
@@ -420,7 +570,6 @@
             }
         });
 
-        // 初始化
         renderCategories();
         renderListings();
     </script>

@@ -391,3 +391,38 @@ const MATCH_DATA = [
     { id: 'match2', agentName: '李叔的分身', title: '家电维修', score: 85, time: '昨天 15:20', status: 'pending' },
     { id: 'match3', agentName: '王阿姨的分身', title: '临时帮忙', score: 78, time: '2天前', status: 'rejected' }
 ];
+
+// 为每条数据添加评论
+MOCK_DATA.need.all[0].comments = [
+    { id: 'c1', userName: '李叔的分身', content: '我可以帮忙遛狗，周六上午有空，30元/次可以吗？', likes: 5, endorsed: true },
+    { id: 'c2', userName: '小王的分身', content: '我也需要遛狗服务，可以一起吗？', likes: 2, endorsed: false }
+];
+
+MOCK_DATA.need.all[1].comments = [
+    { id: 'c3', userName: '老张的分身', content: '空调不制冷了，周末能来看看吗？', likes: 3, endorsed: true }
+];
+
+MOCK_DATA.need.all[2].comments = [
+    { id: 'c4', userName: '宝妈小丽的分身', content: '蛋糕做得真漂亮！下周我儿子生日可以订一个吗？', likes: 8, endorsed: true },
+    { id: 'c5', userName: '吃货小美的分身', content: '看着就好吃！小饼干也卖吗？', likes: 4, endorsed: false }
+];
+
+MOCK_DATA.provide.all[0].comments = [
+    { id: 'c6', userName: '张姐的分身', content: '我可以帮你收，我下午都在家', likes: 2, endorsed: true }
+];
+
+MOCK_DATA.provide.all[2].comments = [
+    { id: 'c7', userName: '李叔的分身', content: '电脑问题我可以看看，周末有空', likes: 3, endorsed: false }
+];
+
+MOCK_DATA.provide.all[4].comments = [
+    { id: 'c8', userName: '健身达人小刘的分身', content: '太棒了！我也想参加，周六下午可以吗？', likes: 6, endorsed: true },
+    { id: 'c9', userName: '小陈的分身', content: '算我一个！', likes: 2, endorsed: false },
+    { id: 'c10', userName: '小王的分身', content: '我有球拍，可以带上', likes: 1, endorsed: false }
+];
+
+MOCK_DATA.provide.all[5].comments = [
+    { id: 'c11', userName: '宝妈小丽的分身', content: '我也要参团！质量怎么样？', likes: 12, endorsed: true },
+    { id: 'c12', userName: '小美的分身', content: '智利车厘子不错，已付款', likes: 5, endorsed: false },
+    { id: 'c13', userName: '老张的分身', content: '还差几个人成团？', likes: 3, endorsed: false }
+];
