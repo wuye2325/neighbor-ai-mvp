@@ -14,15 +14,16 @@
         .phone-frame { width: 100%; max-width: 375px; min-height: 100vh; margin: 0 auto; background: var(--bg-base); padding-bottom: 100px; }
         
         /* 顶部统计卡片 */
-        .stats-card { background: linear-gradient(135deg, #1F2937 0%, #374151 100%); margin: 12px; border-radius: var(--radius-xl); padding: 16px; color: white; }
-        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .stats-title { font-size: 13px; color: rgba(255,255,255,0.7); }
-        .stats-badge { background: var(--accent); color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }
-        .stat-item { padding: 8px 0; }
-        .stat-value { font-size: 22px; font-weight: 700; color: white; }
-        .stat-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
-        .stat-item.highlight .stat-value { color: var(--warm); }
+        /* 顶部统计卡片 - 浅灰色低调风格 */
+        .stats-card { background: var(--bg-muted); margin: 12px; border-radius: var(--radius-lg); padding: 14px 16px; }
+        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .stats-title { font-size: 12px; color: var(--text-muted); }
+        .stats-badge { background: var(--accent-light); color: var(--accent); font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 500; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+        .stat-item { padding: 6px 0; }
+        .stat-value { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+        .stat-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .stat-item.highlight .stat-value { color: var(--primary); }
         
         /* 刷新指示器 */
         .pull-indicator { position: absolute; top: -50px; left: 0; right: 0; height: 50px; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s; }
@@ -133,10 +134,86 @@
         /* 遮罩 */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 150; display: none; }
         .modal-overlay.show { display: block; animation: fadeIn 0.3s ease; }
+        
+        /* 顶部导航栏 */
+        .top-nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border-light); }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; padding: 12px; }
+        .nav-location { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 10px; background: var(--bg-muted); border-radius: var(--radius-full); transition: all 0.2s; }
+        .nav-location:active { transform: scale(0.98); background: var(--border-light); }
+        .nav-location i.loc { color: var(--primary); font-size: 14px; }
+        .nav-location .text { display: flex; flex-direction: column; }
+        .nav-location .title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 4px; }
+        .nav-location .subtitle { font-size: 11px; color: var(--text-muted); }
+        .nav-location i.arrow { color: var(--text-muted); font-size: 10px; transition: transform 0.2s; }
+        .nav-location.expanded i.arrow { transform: rotate(180deg); }
+        .nav-actions { display: flex; align-items: center; gap: 8px; }
+        .nav-btn { position: relative; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: var(--bg-muted); border-radius: 50%; cursor: pointer; transition: all 0.2s; }
+        .nav-btn:active { transform: scale(0.95); background: var(--border-light); }
+        .nav-btn i { font-size: 16px; color: var(--text-secondary); }
+        .nav-btn .badge { position: absolute; top: 6px; right: 6px; min-width: 16px; height: 16px; background: var(--error); color: white; font-size: 10px; font-weight: 600; border-radius: 8px; display: flex; justify-content: center; align-items: center; padding: 0 4px; }
+        
+        /* 小区选择下拉 */
+        .location-dropdown { position: absolute; top: 100%; left: 12px; right: 12px; background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); margin-top: 8px; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s ease; z-index: 200; }
+        .location-dropdown.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .dropdown-header { padding: 12px 14px; border-bottom: 0.5px solid var(--border-light); font-size: 13px; color: var(--text-muted); }
+        .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 14px; cursor: pointer; transition: background 0.2s; }
+        .dropdown-item:active { background: var(--bg-muted); }
+        .dropdown-item.current { background: var(--primary-bg); }
+        .dropdown-item i { font-size: 16px; color: var(--text-muted); }
+        .dropdown-item.current i { color: var(--primary); }
+        .dropdown-item .info { flex: 1; }
+        .dropdown-item .name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .dropdown-item .addr { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .dropdown-item .check { color: var(--primary); font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="phone-frame" id="phoneFrame">
+        <!-- 顶部导航栏 -->
+        <div class="top-nav">
+            <div class="nav-content">
+                <div class="nav-location" id="navLocation" onclick="toggleLocationDropdown()">
+                    <i class="fas fa-map-marker-alt loc"></i>
+                    <div class="text">
+                        <div class="title">万科金域蓝湾 <i class="fas fa-chevron-down arrow"></i></div>
+                        <div class="subtitle">成都市武侯区</div>
+                    </div>
+                </div>
+                <div class="nav-actions">
+                    <div class="nav-btn" onclick="location.href='notifications.html'">
+                        <i class="fas fa-bell"></i>
+                        <div class="badge">3</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 小区选择下拉 -->
+            <div class="location-dropdown" id="locationDropdown">
+                <div class="dropdown-header">切换小区</div>
+                <div class="dropdown-item current" onclick="selectCommunity('万科金域蓝湾', '成都市武侯区')">
+                    <i class="fas fa-home"></i>
+                    <div class="info">
+                        <div class="name">万科金域蓝湾</div>
+                        <div class="addr">成都市武侯区火车南站街道</div>
+                    </div>
+                    <i class="fas fa-check check"></i>
+                </div>
+                <div class="dropdown-item" onclick="selectCommunity('龙湖世纪峰景', '成都市高新区')">
+                    <i class="fas fa-home"></i>
+                    <div class="info">
+                        <div class="name">龙湖世纪峰景</div>
+                        <div class="addr">成都市高新区天府大道</div>
+                    </div>
+                </div>
+                <div class="dropdown-item" onclick="showAddCommunity()">
+                    <i class="fas fa-plus-circle"></i>
+                    <div class="info">
+                        <div class="name">添加新小区</div>
+                        <div class="addr">搜索或手动添加</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 下拉刷新指示器 -->
         <div class="pull-indicator" id="pullIndicator">
             <i class="fas fa-sync-alt" id="refreshIcon"></i>
@@ -516,6 +593,50 @@
             openCommentModal(currentPostId);
             renderListings();
         }
+
+        // 小区下拉菜单
+        function toggleLocationDropdown() {
+            const dropdown = document.getElementById('locationDropdown');
+            const location = document.getElementById('navLocation');
+            dropdown.classList.toggle('show');
+            location.classList.toggle('expanded');
+        }
+
+        function selectCommunity(name, addr) {
+            const titleEl = document.querySelector('.nav-location .title');
+            const subtitleEl = document.querySelector('.nav-location .subtitle');
+            titleEl.innerHTML = name + ' <i class="fas fa-chevron-down arrow"></i>';
+            subtitleEl.textContent = addr;
+            
+            // 更新选中状态
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('current');
+                const checkIcon = item.querySelector('.check');
+                if (checkIcon) checkIcon.remove();
+            });
+            event.currentTarget.classList.add('current');
+            
+            // 添加勾选图标
+            const check = document.createElement('i');
+            check.className = 'fas fa-check check';
+            event.currentTarget.appendChild(check);
+            
+            toggleLocationDropdown();
+        }
+
+        function showAddCommunity() {
+            alert('搜索添加新小区功能开发中...');
+        }
+
+        // 点击其他区域关闭下拉
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('locationDropdown');
+            const location = document.getElementById('navLocation');
+            if (!location.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+                location.classList.remove('expanded');
+            }
+        });
 
         renderCategories();
         renderListings();
