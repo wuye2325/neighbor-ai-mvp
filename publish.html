@@ -20,7 +20,6 @@
         .nav-title .avatar { width: 28px; height: 28px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; }
         .nav-title .avatar i { font-size: 12px; color: white; }
         .nav-title span { font-size: 16px; font-weight: 600; color: var(--text-primary); }
-        .nav-action { font-size: 14px; color: var(--text-muted); cursor: pointer; }
         
         /* 消息区域 */
         .messages-container { flex: 1; overflow-y: auto; padding: 16px; }
@@ -43,10 +42,23 @@
         /* 图片消息 */
         .message-images { display: grid; gap: 4px; margin-top: 8px; border-radius: var(--radius-md); overflow: hidden; }
         .message-images img { width: 100%; border-radius: var(--radius-sm); }
-        .message-images.single img { max-height: 200px; object-fit: cover; }
-        .message-images.multiple { grid-template-columns: repeat(2, 1fr); }
         
-        /* AI 预览卡片 */
+        /* 搜索结果卡片 */
+        .search-results { background: var(--bg-card); border-radius: var(--radius-lg); margin-top: 10px; box-shadow: var(--shadow-sm); overflow: hidden; }
+        .search-header { padding: 12px 16px; background: var(--bg-muted); display: flex; align-items: center; justify-content: space-between; }
+        .search-header span { font-size: 13px; color: var(--text-secondary); }
+        .search-header .count { color: var(--primary); font-weight: 600; }
+        .search-item { display: flex; align-items: center; padding: 14px 16px; border-bottom: 0.5px solid var(--border-light); cursor: pointer; transition: all 0.2s; }
+        .search-item:last-child { border-bottom: none; }
+        .search-item:active { background: var(--bg-muted); }
+        .search-avatar { width: 44px; height: 44px; background: var(--primary-gradient); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px; flex-shrink: 0; }
+        .search-avatar i { font-size: 18px; color: white; }
+        .search-info { flex: 1; min-width: 0; }
+        .search-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-meta { font-size: 12px; color: var(--text-muted); }
+        .search-price { font-size: 15px; font-weight: 700; color: var(--primary); }
+        
+        /* 发布预览卡片 */
         .preview-card { background: var(--bg-card); border-radius: var(--radius-lg); margin-top: 10px; box-shadow: var(--shadow-sm); overflow: hidden; }
         .preview-header { padding: 14px 16px; background: var(--primary-bg); display: flex; align-items: center; gap: 10px; }
         .preview-header i { color: var(--primary); }
@@ -56,7 +68,7 @@
         .preview-field:last-child { margin-bottom: 0; }
         .preview-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
         .preview-value { font-size: 15px; color: var(--text-primary); font-weight: 500; }
-        .preview-value.editable { background: var(--bg-muted); padding: 10px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .preview-value.editable { background: var(--bg-muted); padding: 10px 12px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; }
         .preview-value.editable:active { background: var(--border-light); }
         .preview-value input { border: none; background: transparent; font-size: 15px; color: var(--text-primary); width: 100%; outline: none; font-weight: 500; }
         .preview-tags { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -66,63 +78,52 @@
         .preview-btn.edit { background: var(--bg-muted); color: var(--text-secondary); }
         .preview-btn.confirm { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
         
-        /* 快捷选项 */
-        .quick-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .quick-option { background: var(--bg-muted); border: 1px solid var(--border-light); padding: 8px 14px; border-radius: var(--radius-full); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
-        .quick-option:active { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
-        
         /* 输入区域 */
-        .input-area { padding: 12px 16px; background: var(--bg-card); border-top: 0.5px solid var(--border-light); }
+        .input-area { background: var(--bg-card); border-top: 0.5px solid var(--border-light); }
+        
+        /* 功能插槽 - 核心 */
+        .mode-slots { display: flex; gap: 8px; padding: 12px 16px; background: var(--bg-card); }
+        .mode-slot { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 12px; background: var(--bg-muted); border: 2px solid transparent; border-radius: var(--radius-full); font-size: 14px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; }
+        .mode-slot:active { transform: scale(0.98); }
+        .mode-slot.active { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
+        .mode-slot.active.provide { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+        .mode-slot.active.need { background: var(--warm-light); border-color: var(--warm); color: var(--warm); }
+        .mode-slot i { font-size: 14px; }
         
         /* 图片预览 */
-        .image-preview { display: flex; gap: 8px; margin-bottom: 10px; }
-        .image-preview-item { width: 60px; height: 60px; border-radius: var(--radius-md); overflow: hidden; position: relative; }
+        .image-preview { display: flex; gap: 8px; padding: 0 16px 8px; }
+        .image-preview-item { width: 56px; height: 56px; border-radius: var(--radius-md); overflow: hidden; position: relative; }
         .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
         .image-preview-item .remove { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
         .image-preview-item .remove i { font-size: 8px; color: white; }
         
-        .input-row { display: flex; align-items: flex-end; gap: 10px; }
+        .input-row { display: flex; align-items: flex-end; gap: 10px; padding: 8px 16px 12px; }
         .input-field { flex: 1; background: var(--bg-muted); border-radius: var(--radius-xl); padding: 12px 16px; display: flex; align-items: center; }
         .input-field textarea { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; resize: none; max-height: 100px; color: var(--text-primary); line-height: 1.4; }
         .input-field textarea::placeholder { color: var(--text-muted); }
         
         .input-actions { display: flex; gap: 6px; }
-        .action-btn { width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .action-btn { width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; border: none; }
         .action-btn.image { background: var(--bg-muted); color: var(--text-muted); }
         .action-btn.image:active { background: var(--primary-bg); color: var(--primary); }
-        .action-btn.voice { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
-        .action-btn.voice:active { transform: scale(0.95); }
-        .action-btn.voice.recording { background: var(--error); animation: pulse 1s infinite; }
+        .action-btn.voice { background: var(--bg-muted); color: var(--text-muted); }
+        .action-btn.voice:active { background: var(--warm-light); color: var(--warm); }
+        .action-btn.voice.recording { background: var(--error); color: white; animation: pulse 1s infinite; }
         .action-btn.send { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-sm); }
-        .action-btn.send:disabled { background: var(--bg-muted); color: var(--text-muted); box-shadow: none; }
         
-        /* 语音提示 */
-        .voice-hint { text-align: center; padding: 8px; font-size: 12px; color: var(--text-muted); }
-        .voice-hint.recording { color: var(--error); }
-        
-        /* 类型选择弹窗 */
-        .type-modal { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: var(--bg-card); border-radius: var(--radius-xl) var(--radius-xl) 0 0; z-index: 200; display: none; flex-direction: column; box-shadow: var(--shadow-xl); }
-        .type-modal.show { display: flex; animation: slideUp 0.3s ease; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 0.5px solid var(--border-light); }
-        .modal-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
-        .modal-close { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-muted); }
-        .modal-body { padding: 16px; }
-        .type-option { display: flex; align-items: center; padding: 16px; background: var(--bg-muted); border-radius: var(--radius-lg); margin-bottom: 10px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
-        .type-option:active { transform: scale(0.99); }
-        .type-option.selected { border-color: var(--primary); background: var(--primary-bg); }
-        .type-icon { width: 48px; height: 48px; background: var(--bg-card); border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; margin-right: 14px; }
-        .type-option.selected .type-icon { background: var(--primary-gradient); }
-        .type-icon i { font-size: 22px; color: var(--text-muted); }
-        .type-option.selected .type-icon i { color: white; }
-        .type-text h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-        .type-text p { font-size: 13px; color: var(--text-muted); }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 150; display: none; }
-        .modal-overlay.show { display: block; animation: fadeIn 0.3s ease; }
+        /* 引导提示 */
+        .hint-bar { padding: 8px 16px; background: var(--bg-muted); font-size: 12px; color: var(--text-muted); text-align: center; transition: all 0.3s; }
+        .hint-bar.provide { background: var(--accent-light); color: var(--accent); }
+        .hint-bar.need { background: var(--warm-light); color: var(--warm); }
         
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -134,9 +135,9 @@
             </div>
             <div class="nav-title">
                 <div class="avatar"><i class="fas fa-robot"></i></div>
-                <span>跟分身说</span>
+                <span>智能助手</span>
             </div>
-            <div class="nav-action"></div>
+            <div style="width: 36px;"></div>
         </div>
 
         <div class="messages-container" id="messagesContainer">
@@ -144,23 +145,46 @@
             <div class="message-item received">
                 <div class="message-avatar"><i class="fas fa-robot"></i></div>
                 <div class="message-content">
-                    <div class="message-bubble">你好呀！想发布什么呢？跟我说说就行~</div>
+                    <div class="message-bubble">你好！我是你的邻里分身助手 🤖</div>
                     <div class="message-time">刚刚</div>
-                    <div class="quick-options">
-                        <div class="quick-option" onclick="quickInput('我可以帮忙遛狗')">🐕 遛狗</div>
-                        <div class="quick-option" onclick="quickInput('我会修家电')">🔧 维修</div>
-                        <div class="quick-option" onclick="quickInput('需要人帮忙')">🙏 求助</div>
-                        <div class="quick-option" onclick="quickInput('想找人一起')">👥 组局</div>
-                    </div>
+                </div>
+            </div>
+            <div class="message-item received">
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content">
+                    <div class="message-bubble">我可以帮你搜索邻居发布的信息，也可以帮你发布需求或服务。选择下方模式，或者直接问我问题~</div>
+                    <div class="message-time">刚刚</div>
                 </div>
             </div>
         </div>
 
         <div class="input-area">
+            <!-- 功能插槽 -->
+            <div class="mode-slots">
+                <div class="mode-slot active" id="slotSearch" onclick="selectMode('search')">
+                    <i class="fas fa-search"></i>
+                    <span>智能搜索</span>
+                </div>
+                <div class="mode-slot provide" id="slotProvide" onclick="selectMode('provide')">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span>我提供</span>
+                </div>
+                <div class="mode-slot need" id="slotNeed" onclick="selectMode('need')">
+                    <i class="fas fa-hands-helping"></i>
+                    <span>我需要</span>
+                </div>
+            </div>
+            
+            <!-- 引导提示 -->
+            <div class="hint-bar" id="hintBar">输入问题，帮你搜索平台内的信息</div>
+            
+            <!-- 图片预览 -->
             <div class="image-preview" id="imagePreview"></div>
+            
+            <!-- 输入行 -->
             <div class="input-row">
                 <div class="input-field">
-                    <textarea id="messageInput" rows="1" placeholder="说点什么，或按住语音..." oninput="autoResize(this); checkInput()"></textarea>
+                    <textarea id="messageInput" rows="1" placeholder="输入问题或描述..." oninput="autoResize(this); checkInput()"></textarea>
                 </div>
                 <div class="input-actions">
                     <div class="action-btn image" onclick="addImage()">
@@ -171,46 +195,56 @@
                     </div>
                 </div>
             </div>
-            <div class="voice-hint" id="voiceHint">按住说话，松开发送</div>
-        </div>
-
-        <!-- 类型选择弹窗 -->
-        <div class="modal-overlay" id="modalOverlay" onclick="closeTypeModal()"></div>
-        <div class="type-modal" id="typeModal">
-            <div class="modal-header">
-                <div class="modal-title">这是什么类型的发布？</div>
-                <div class="modal-close" onclick="closeTypeModal()"><i class="fas fa-times"></i></div>
-            </div>
-            <div class="modal-body">
-                <div class="type-option" onclick="selectType('provide')">
-                    <div class="type-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                    <div class="type-text">
-                        <h4>我可以提供</h4>
-                        <p>你有技能、服务、物品可以分享</p>
-                    </div>
-                </div>
-                <div class="type-option" onclick="selectType('need')">
-                    <div class="type-icon"><i class="fas fa-hands-helping"></i></div>
-                    <div class="type-text">
-                        <h4>我需要帮助</h4>
-                        <p>你需要邻居的帮助或服务</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
+    <script src="data/mock-data.js"></script>
     <script>
+        let currentMode = 'search'; // search | provide | need
         let selectedImages = [];
         let isRecording = false;
-        let publishType = null;
-        let collectedInfo = {
-            title: '',
-            desc: '',
-            price: '',
-            tags: [],
-            category: ''
+        let collectedInfo = { title: '', desc: '', price: '', tags: [], category: '' };
+        let hasReceivedInput = false;
+
+        const modeConfig = {
+            search: {
+                placeholder: '输入问题，帮你搜索平台内的信息',
+                hint: '输入问题，帮你搜索平台内的信息',
+                greeting: null
+            },
+            provide: {
+                placeholder: '描述你可以提供的服务或技能...',
+                hint: '描述你可以提供的服务或技能，我会帮你整理发布',
+                greeting: '好的！你有什么技能或服务可以分享给邻居呢？比如：遛狗、维修、辅导...'
+            },
+            need: {
+                placeholder: '描述你需要什么帮助...',
+                hint: '描述你需要什么帮助，我会帮你整理发布',
+                greeting: '没问题！你需要邻居帮你做什么呢？比如：找人遛狗、修家电、收快递...'
+            }
         };
+
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            // 更新插槽状态
+            document.querySelectorAll('.mode-slot').forEach(slot => slot.classList.remove('active'));
+            document.getElementById('slot' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+            
+            // 更新提示
+            const config = modeConfig[mode];
+            document.getElementById('messageInput').placeholder = config.placeholder;
+            const hintBar = document.getElementById('hintBar');
+            hintBar.textContent = config.hint;
+            hintBar.className = 'hint-bar' + (mode === 'provide' ? ' provide' : mode === 'need' ? ' need' : '');
+            
+            // 发送引导语（只发一次）
+            if (config.greeting && !hasReceivedInput) {
+                addAIMessage(config.greeting);
+            }
+            
+            document.getElementById('messageInput').focus();
+        }
 
         function autoResize(el) {
             el.style.height = 'auto';
@@ -219,12 +253,10 @@
 
         function checkInput() {
             const input = document.getElementById('messageInput');
-            const hasText = input.value.trim().length > 0;
-            const hasImages = selectedImages.length > 0;
+            const hasContent = input.value.trim().length > 0 || selectedImages.length > 0;
             
-            // 更新语音按钮状态
             const voiceBtn = document.getElementById('voiceBtn');
-            if (hasText || hasImages) {
+            if (hasContent) {
                 voiceBtn.className = 'action-btn send';
                 voiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             } else {
@@ -233,17 +265,11 @@
             }
         }
 
-        function quickInput(text) {
-            document.getElementById('messageInput').value = text;
-            checkInput();
-        }
-
         function addImage() {
             if (selectedImages.length >= 9) {
                 alert('最多上传9张图片');
                 return;
             }
-            
             const randomId = Math.floor(Math.random() * 100);
             selectedImages.push(`https://picsum.photos/400/400?random=${randomId}`);
             renderImagePreview();
@@ -257,43 +283,41 @@
         }
 
         function renderImagePreview() {
-            const container = document.getElementById('imagePreview');
-            container.innerHTML = selectedImages.map((img, i) => `
+            document.getElementById('imagePreview').innerHTML = selectedImages.map((img, i) => `
                 <div class="image-preview-item">
                     <img src="${img}" alt="预览">
-                    <div class="remove" onclick="removeImage(${i})">
-                        <i class="fas fa-times"></i>
-                    </div>
+                    <div class="remove" onclick="removeImage(${i})"><i class="fas fa-times"></i></div>
                 </div>
             `).join('');
         }
 
         function toggleVoice() {
             const input = document.getElementById('messageInput');
-            const hasText = input.value.trim().length > 0;
-            const hasImages = selectedImages.length > 0;
+            const hasContent = input.value.trim().length > 0 || selectedImages.length > 0;
             
-            if (hasText || hasImages) {
-                // 发送消息
+            if (hasContent) {
                 sendMessage();
             } else {
-                // 切换录音状态
                 isRecording = !isRecording;
                 const voiceBtn = document.getElementById('voiceBtn');
-                const voiceHint = document.getElementById('voiceHint');
+                const hintBar = document.getElementById('hintBar');
                 
                 if (isRecording) {
                     voiceBtn.classList.add('recording');
-                    voiceHint.classList.add('recording');
-                    voiceHint.textContent = '🔴 正在录音...松开结束';
+                    hintBar.textContent = '🔴 正在录音...点击结束';
                 } else {
                     voiceBtn.classList.remove('recording');
-                    voiceHint.classList.remove('recording');
-                    voiceHint.textContent = '按住说话，松开发送';
+                    hintBar.textContent = modeConfig[currentMode].hint;
                     
-                    // 模拟语音识别结果
+                    // 模拟语音识别
                     setTimeout(() => {
-                        addAIMessage('我听到你说："周末可以帮忙遛狗，我有经验，家里也养了金毛"~ 是这样吗？');
+                        const sampleTexts = {
+                            search: '附近有没有人会修空调？',
+                            provide: '我周末可以帮忙遛狗，有经验',
+                            need: '周末需要人帮忙遛狗'
+                        };
+                        document.getElementById('messageInput').value = sampleTexts[currentMode];
+                        checkInput();
                     }, 500);
                 }
             }
@@ -305,12 +329,12 @@
             
             if (!text && selectedImages.length === 0) return;
             
+            hasReceivedInput = true;
             const container = document.getElementById('messagesContainer');
-            const now = new Date();
-            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            const time = new Date().getHours() + ':' + String(new Date().getMinutes()).padStart(2, '0');
             
-            // 添加用户消息
-            let messageHTML = `
+            // 用户消息
+            let html = `
                 <div class="message-item sent">
                     <div class="message-avatar"><i class="fas fa-user"></i></div>
                     <div class="message-content">
@@ -318,115 +342,101 @@
             `;
             
             if (selectedImages.length > 0) {
-                const gridClass = selectedImages.length === 1 ? 'single' : 'multiple';
-                messageHTML += `
-                    <div class="message-images ${gridClass}">
-                        ${selectedImages.map(img => `<img src="${img}" alt="图片">`).join('')}
-                    </div>
-                `;
+                html += `<div class="message-images" style="grid-template-columns: repeat(${Math.min(selectedImages.length, 2)}, 1fr)">
+                    ${selectedImages.map(img => `<img src="${img}">`).join('')}
+                </div>`;
             }
             
-            messageHTML += `<div class="message-time">${time}</div></div></div>`;
-            container.innerHTML += messageHTML;
+            html += `<div class="message-time">${time}</div></div></div>`;
+            container.innerHTML += html;
             
-            // 收集信息
             collectedInfo.desc = text;
             
-            // 清空输入
+            // 清空
             input.value = '';
             input.style.height = 'auto';
             selectedImages = [];
             renderImagePreview();
             checkInput();
-            
-            // 滚动到底部
             container.scrollTop = container.scrollHeight;
             
-            // AI 响应
-            setTimeout(() => {
-                if (!publishType) {
-                    showTypeModal();
-                } else {
-                    processWithAI();
-                }
-            }, 800);
+            // AI响应
+            setTimeout(() => processByMode(), 600);
         }
 
-        function addAIMessage(text, extraContent = '') {
-            const container = document.getElementById('messagesContainer');
-            const now = new Date();
-            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+        function processByMode() {
+            if (currentMode === 'search') {
+                processSearch();
+            } else {
+                processPublish();
+            }
+        }
+
+        function processSearch() {
+            // 模拟搜索
+            const results = [
+                { title: '家电维修，30年经验', name: '李叔的分身', price: '面议', match: 95 },
+                { title: '空调清洗维修', name: '张师傅的分身', price: '50元', match: 88 },
+                { title: '周末家电维修', name: '王师傅的分身', price: '60元', match: 82 }
+            ];
             
-            container.innerHTML += `
-                <div class="message-item received">
-                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="message-content">
-                        <div class="message-bubble">${text}</div>
-                        ${extraContent}
-                        <div class="message-time">${time}</div>
+            const html = `
+                <div class="search-results">
+                    <div class="search-header">
+                        <span>找到 <span class="count">${results.length}</span> 个相关结果</span>
                     </div>
+                    ${results.map(r => `
+                        <div class="search-item" onclick="startChat('${r.name}')">
+                            <div class="search-avatar"><i class="fas fa-robot"></i></div>
+                            <div class="search-info">
+                                <div class="search-title">${r.title}</div>
+                                <div class="search-meta">${r.name} · 匹配度 ${r.match}%</div>
+                            </div>
+                            <div class="search-price">${r.price}</div>
+                        </div>
+                    `).join('')}
                 </div>
             `;
             
-            container.scrollTop = container.scrollHeight;
+            addAIMessage('帮你找到了这些邻居发布的信息~', html);
         }
 
-        function showTypeModal() {
-            document.getElementById('modalOverlay').classList.add('show');
-            document.getElementById('typeModal').classList.add('show');
-        }
-
-        function closeTypeModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
-            document.getElementById('typeModal').classList.remove('show');
-        }
-
-        function selectType(type) {
-            publishType = type;
-            closeTypeModal();
-            
-            // 更新选项UI
-            document.querySelectorAll('.type-option').forEach(el => el.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-            
-            // AI 继续
-            setTimeout(() => {
-                processWithAI();
-            }, 300);
-        }
-
-        function processWithAI() {
-            // 模拟AI整理信息
+        function processPublish() {
             collectedInfo.title = extractTitle(collectedInfo.desc);
             collectedInfo.tags = extractTags(collectedInfo.desc);
             collectedInfo.price = extractPrice(collectedInfo.desc);
             
-            // 显示预览卡片
-            const previewHTML = `
+            const typeLabel = currentMode === 'provide' ? '提供' : '需求';
+            
+            const html = `
                 <div class="preview-card">
                     <div class="preview-header">
                         <i class="fas fa-magic"></i>
-                        <span>帮你整理好了，确认一下？</span>
+                        <span>帮你整理好了，确认发布？</span>
                     </div>
                     <div class="preview-body">
                         <div class="preview-field">
+                            <div class="preview-label">类型</div>
+                            <div class="preview-value">${typeLabel}</div>
+                        </div>
+                        <div class="preview-field">
                             <div class="preview-label">标题</div>
-                            <div class="preview-value editable" onclick="editField('title')">
-                                <input type="text" id="editTitle" value="${collectedInfo.title}" placeholder="点击编辑">
+                            <div class="preview-value editable">
+                                <input type="text" id="editTitle" value="${collectedInfo.title}">
                                 <i class="fas fa-pen" style="color: var(--text-muted); font-size: 12px;"></i>
                             </div>
                         </div>
                         <div class="preview-field">
                             <div class="preview-label">描述</div>
-                            <div class="preview-value editable" onclick="editField('desc')">
-                                <input type="text" id="editDesc" value="${collectedInfo.desc}" placeholder="点击编辑">
+                            <div class="preview-value editable">
+                                <input type="text" id="editDesc" value="${collectedInfo.desc}">
                                 <i class="fas fa-pen" style="color: var(--text-muted); font-size: 12px;"></i>
                             </div>
                         </div>
                         <div class="preview-field">
                             <div class="preview-label">价格</div>
-                            <div class="preview-value editable" onclick="editField('price')">
-                                <input type="text" id="editPrice" value="${collectedInfo.price || '面议'}" placeholder="点击编辑">
+                            <div class="preview-value editable">
+                                <input type="text" id="editPrice" value="${collectedInfo.price || '面议'}">
                                 <i class="fas fa-pen" style="color: var(--text-muted); font-size: 12px;"></i>
                             </div>
                         </div>
@@ -438,20 +448,19 @@
                         </div>
                     </div>
                     <div class="preview-actions">
-                        <div class="preview-btn edit" onclick="continueChat()">继续说</div>
+                        <div class="preview-btn edit" onclick="continueInput()">继续说</div>
                         <div class="preview-btn confirm" onclick="confirmPublish()">确认发布</div>
                     </div>
                 </div>
             `;
             
-            addAIMessage('我帮你整理了一下，看看对不对？', previewHTML);
+            addAIMessage('我帮你整理了一下，看看对不对？', html);
         }
 
         function extractTitle(desc) {
             if (desc.includes('遛狗')) return '周末遛狗服务';
-            if (desc.includes('维修') || desc.includes('修')) return '家电维修服务';
+            if (desc.includes('修') || desc.includes('维修')) return '家电维修服务';
             if (desc.includes('辅导')) return '作业辅导';
-            if (desc.includes('蛋糕') || desc.includes('烘焙')) return '手工烘焙';
             return desc.substring(0, 15) + (desc.length > 15 ? '...' : '');
         }
 
@@ -459,8 +468,7 @@
             const tags = [];
             if (desc.includes('遛') || desc.includes('狗')) tags.push('宠物');
             if (desc.includes('周末')) tags.push('周末');
-            if (desc.includes('维修') || desc.includes('修')) tags.push('维修');
-            if (desc.includes('辅导') || desc.includes('作业')) tags.push('辅导');
+            if (desc.includes('修')) tags.push('维修');
             if (tags.length === 0) tags.push('生活服务');
             return tags;
         }
@@ -470,17 +478,17 @@
             return match ? match[1] + '元' : '';
         }
 
-        function editField(field) {
-            event.stopPropagation();
+        function startChat(name) {
+            alert(`开始与 ${name} 聊天`);
+            location.href = 'chat.html';
         }
 
-        function continueChat() {
-            addAIMessage('好的，继续说~ 还有什么要补充的吗？');
+        function continueInput() {
+            addAIMessage('好的，继续补充~ 还有什么要说的吗？');
             document.getElementById('messageInput').focus();
         }
 
         function confirmPublish() {
-            // 获取编辑后的值
             collectedInfo.title = document.getElementById('editTitle')?.value || collectedInfo.title;
             collectedInfo.desc = document.getElementById('editDesc')?.value || collectedInfo.desc;
             collectedInfo.price = document.getElementById('editPrice')?.value || collectedInfo.price;
@@ -492,6 +500,23 @@
                     location.href = 'hall.html';
                 }
             }, 1000);
+        }
+
+        function addAIMessage(text, extraContent = '') {
+            const container = document.getElementById('messagesContainer');
+            const time = new Date().getHours() + ':' + String(new Date().getMinutes()).padStart(2, '0');
+            
+            container.innerHTML += `
+                <div class="message-item received">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content">
+                        <div class="message-bubble">${text}</div>
+                        ${extraContent}
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            container.scrollTop = container.scrollHeight;
         }
 
         // 回车发送
