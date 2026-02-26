@@ -31,7 +31,6 @@
         .memory-card.swiped { transform: translateX(-120px); }
         
         .memory-text { font-size: 15px; color: #1a1a1a; line-height: 1.5; }
-        .memory-text .detail { color: #666; font-size: 14px; margin-top: 4px; }
         
         /* 操作按钮层 */
         .card-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; z-index: 0; }
@@ -199,9 +198,7 @@
             container.innerHTML = memories.map(item => `
                 <div class="memory-card-wrapper" data-id="${item.id}">
                     <div class="memory-card" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
-                        <div class="memory-text">
-                            ${item.content}${item.detail ? `<div class="detail">${item.detail}</div>` : ''}
-                        </div>
+                        <div class="memory-text">${item.content}${item.detail ? ` ${item.detail}` : ''}</div>
                     </div>
                     <div class="card-actions">
                         <div class="card-action edit" onclick="editMemory('${item.id}')">
